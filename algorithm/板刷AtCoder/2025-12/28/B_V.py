@@ -12,7 +12,7 @@ def main():
 
     connect = [False] * (n - 1) # 判断相邻两个元素是否符合一定条件
     for i in a:
-        connect[i - 1] = True  # 判断相邻两个数的连通性
+        connect[i - 1] = True  # 判断相邻两个数是否黏连在一起
     ans = []
     
     i = 0
@@ -20,8 +20,9 @@ def main():
         j = i
         while j < n - 1 and connect[j]:  
             j += 1
-        ans += list(range(j + 1, i, -1))
+        ans += list(range(j + 1, i, -1))  # 逆序输出
         i = j + 1
+
     print(*ans)
 if __name__ == "__main__":
     main()

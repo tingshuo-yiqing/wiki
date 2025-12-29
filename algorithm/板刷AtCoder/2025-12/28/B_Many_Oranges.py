@@ -10,12 +10,14 @@ def main():
     mx = 0
     mi = float('inf')
 
-    # if t % (b - a) != 0:
-    #     print("UNSATISFIABLE")
-    #     sys.exit()
-    
-    print((t + a - 1) // a)
-    print((t + b + 1) // b)
+    for i in range(1, 1000001):   # 枚举答案
+        if a * i <= t and b * i >= t:
+            mi = min(mi, i)
+            mx = max(mx, i)
+    if mx == 0:
+        print("UNSATISFIABLE")
+    else:
+        print(mi, mx)
 
 if __name__ == "__main__":
     main()
