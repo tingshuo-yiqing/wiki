@@ -40,6 +40,6 @@ def main():
     # dfs(0, 0)
     # print(ans)
     ret = bit_enum(n, nums)
-    print
+    print(ret)
 if __name__ == "__main__":
     main()
