@@ -1,12 +1,14 @@
 ## [C. Separated Lunch](https://atcoder.jp/contests/abc374/tasks/abc374_c)
 
-在数据为$2≤N≤20$的情况下考虑使用搜索
+在数据为 $2≤N≤20$ 的情况下考虑使用搜索和枚举
 
-递归实现**指数型枚举**，即每一个部门都有下雨不选两种状态。最终取$max$即可。
+递归实现**指数型枚举**，即每一个部门都有下雨不选两种状态。最终取 $\max$ 即可。
 
 ```python
 ans = max(ans, min(now, total - now))
 ```
+
+也可以使用**二进制枚举**，选与不选组成的 $2^n$ 的方案数。 
 
 ## [B. V](https://atcoder.jp/contests/abc289/tasks/abc289_b)
 
@@ -42,3 +44,9 @@ ans = max(ans, min(now, total - now))
 
 ## [Many Oranges](https://atcoder.jp/contests/abc195/tasks/abc195_b)
 
+找出隐含的条件、再遍历 $k$ 即可。
+
+条件是：
+$$
+k⋅A≤T≤k⋅B
+$$
