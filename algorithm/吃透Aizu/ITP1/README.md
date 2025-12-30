@@ -1,6 +1,6 @@
 | **Topic**                        | **Problem Title**                                           | **Hints**                        | **Solution**                          |
 |----------------------------------|------------------------------------------------------------|----------------------------------|---------------------------------------|
-| **Topic 1: Getting Started**     | [Hello World](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A) | Basic Output                   | [Editorial](./editorials/Hello World.md) |
+| **Topic 1: Getting Started**     | [Hello World](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A) | Basic Output                   | [Editorial](editorials/Hello World.md) |
 |                                  | X Cubic                                                    | Power calculation              | [Editorial]                          |
 |                                  | Rectangle                                                  | Area and Perimeter             | [Editorial]                          |
 |                                  | Watch                                                      | Time conversion                | [Editorial]                          |
