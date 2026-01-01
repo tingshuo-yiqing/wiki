@@ -46,7 +46,7 @@ ans = max(ans, min(now, total - now))
 
 找出隐含的条件、再遍历 $k$ 即可。
 
-条件是：
+条件是: 
 $$
-k⋅A≤T≤k⋅B
+k⋅A \le T \le k⋅B
 $$

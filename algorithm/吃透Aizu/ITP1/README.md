@@ -1,7 +1,7 @@
 | **Topic**                        | **Problem Title**                                           | **Hints**                        | **Solution**                          |
 |----------------------------------|------------------------------------------------------------|----------------------------------|---------------------------------------|
 | **Topic 1: Getting Started**     | [Hello World](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A) | Basic Output                   | [Editorial](https://github.com/tingshuo-yiqing/wiki/blob/main/algorithm/%E5%90%83%E9%80%8FAizu/ITP1/editorials/Hello%20World.md) |
-|                                  | X Cubic                                                    | Power calculation              | [Editorial]                          |
+|                                  | X Cubic                                                    | Power calculation              |                        |
 |                                  | Rectangle                                                  | Area and Perimeter             | [Editorial]                          |
 |                                  | Watch                                                      | Time conversion                | [Editorial]                          |
 | **Topic 2: Branching**           | Small, Large, or Equal                                     | if-else logic                  | [Editorial]                          |
