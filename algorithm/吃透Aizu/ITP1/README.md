@@ -1,47 +1,46 @@
-| **Topic**                        | **Problem Title**                                           | **Hints**                        | **Solution**                          |
-|----------------------------------|------------------------------------------------------------|----------------------------------|---------------------------------------|
-| **Topic 1: Getting Started**     | [Hello World](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A) | Basic Output                   | [Editorial](https://github.com/tingshuo-yiqing/wiki/blob/main/algorithm/%E5%90%83%E9%80%8FAizu/ITP1/editorials/Hello%20World.md) |
-|                                  | X Cubic                                                    | Power calculation              |                        |
-|                                  | Rectangle                                                  | Area and Perimeter             | [Editorial]                          |
-|                                  | Watch                                                      | Time conversion                | [Editorial]                          |
-| **Topic 2: Branching**           | Small, Large, or Equal                                     | if-else logic                  | [Editorial]                          |
-|                                  | Range                                                      | Logical AND / Compound conditions | [Editorial]                          |
-|                                  | Sorting Three Numbers                                      | Sorting logic                  | [Editorial]                          |
-|                                  | Circle in a Rectangle                                      | Geometric constraints          | [Editorial]                          |
-| **Topic 3: Repetitive Processing**| Print Many Hello World                                     | for/while loops                | [Editorial]                          |
-|                                  | Print Test Cases                                           | Handling multiple datasets     | [Editorial]                          |
-|                                  | Swapping Two Numbers                                       | Variable swapping              | [Editorial]                          |
-|                                  | How many divisors?                                         | Divisibility testing           | [Editorial]                          |
-| **Topic 4: Computation**         | A / B Problem                                              | Floating point precision       | [Editorial]                          |
-|                                  | Circle                                                     | Constant PI and Circle math    | [Editorial]                          |
-|                                  | Simple Calculator                                          | Simulation of operators        | [Editorial]                          |
-|                                  | Min, Max and Sum                                           | Sequence statistics            | [Editorial]                          |
-| **Topic 5: Structured Program I**| Print a Rectangle                                          | Nested loops (Pattern)         | [Editorial]                          |
-|                                  | Print a Frame                                              | Conditional boundary printing  | [Editorial]                          |
-|                                  | Print a Chessboard                                         | Parity logic (i+j)%2           | [Editorial]                          |
-|                                  | Structured Programming                                     | Control flow simulation        | [Editorial]                          |
-| **Topic 6: Array**               | Reversing a Sequence                                       | Array/List reversal            | [Editorial]                          |
-|                                  | Finding Missing Cards                                      | 2D boolean marking             | [Editorial]                          |
-|                                  | Official House                                             | 3D array application           | [Editorial]                          |
-|                                  | Matrix Vector Multiplication                               | Linear algebra basics          | [Editorial]                          |
-| **Topic 7: Structured Program II**| Grading                                                   | Complex conditional branching  | [Editorial]                          |
-|                                  | How many ways?                                             | Triple loops / Combinations    | [Editorial]                          |
-|                                  | Spreadsheet                                                | Row and Column summation       | [Editorial]                          |
-|                                  | Matrix Multiplication                                      | Matrix-Matrix product          | [Editorial]                          |
-| **Topic 8: Character**           | Toggling Cases                                             | Character case conversion      | [Editorial]                          |
-|                                  | Sum of Numbers                                             | String to Digit processing     | [Editorial]                          |
-|                                  | Counting Characters                                        | Frequency array (ASCII)        | [Editorial]                          |
-|                                  | Ring                                                       | Circular string search         | [Editorial]                          |
-| **Topic 9: String**              | Finding a Word                                             | Word matching                  | [Editorial]                          |
-|                                  | Shuffle                                                    | String slicing and concatenation | [Editorial]                          |
-|                                  | Card Game                                                  | Lexicographical comparison     | [Editorial]                          |
-|                                  | String Manipulation                                        | reverse, replace, print operations | [Editorial]                          |
-| **Topic 10: Math Functions**     | Distance                                                   | Euclidean distance formula     | [Editorial]                          |
-|                                  | Triangle                                                   | Trigonometry (sin/cos/rad)     | [Editorial]                          |
-|                                  | Standard Deviation                                         | Statistical calculation        | [Editorial]                          |
-|                                  | Distance II                                                | Minkowski distance             | [Editorial]                          |
-| **Topic 11: Structure and Class**| Dice I                                                     | Dice rolling simulation        | [Editorial]                          |
-|                                  | Dice II                                                    | Rotating and matching faces    | [Editorial]                          |
-|                                  | Dice III                                                   | Identifying equivalent dice    | [Editorial]                          |
-|                                  | Dice IV                                                    | Managing multiple dice objects | [Editorial]                          |
-
+| **Topic**                        | **Problem Title**                                           | **Hints**                        | **Code**                              | **Editorial**                          |
+|----------------------------------|------------------------------------------------------------|----------------------------------|---------------------------------------|----------------------------------------|
+| **Topic 1: Getting Started**     | [Hello World](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A) | 基础输出                   | [Code](code/Hello_World.py) | [Editorial](editorials/Hello%20World.md) |
+|                                  | [X Cubic](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_B) | 幂计算              | [Code](code/X_Cubic.py) | [Editorial](editorials/X_Cubic.md) |
+|                                  | [Rectangle](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_C) | 面积和周长             | [Code](code/Rectangle.py) | [Editorial](editorials/Rectangle.md) |
+|                                  | [Watch](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_D) | 时间转换                | [Code](code/Watch.py) | [Editorial](editorials/Watch.md) |
+| **Topic 2: Branching**           | [Small, Large, or Equal](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_2_A) | if-else逻辑                  | [Code](code/Small_Large_or_Equal.py) | [Editorial](editorials/Small_Large_or_Equal.md) |
+|                                  | [Range](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_2_B) | 逻辑与/复合条件 | [Code](code/Range.py) | [Editorial](editorials/Range.md) |
+|                                  | [Sorting Three Numbers](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_2_C) | 排序逻辑                  | [Code](code/Sorting_Three_Numbers.py) | [Editorial](editorials/Sorting_Three_Numbers.md) |
+|                                  | [Circle in a Rectangle](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_2_D) | 几何约束          | [Code](code/Circle_in_a_Rectangle.py) | [Editorial](editorials/Circle_in_a_Rectangle.md) |
+| **Topic 3: Repetitive Processing**| [Print Many Hello World](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A) | for/while循环                | [Code](code/Print_Many_Hello_World.py) | [Editorial](editorials/Print_Many_Hello_World.md) |
+|                                  | [Print Test Cases](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_B) | 处理多组数据     | [Code](code/Print_Test_Cases.py) | [Editorial](editorials/Print_Test_Cases.md) |
+|                                  | [Swapping Two Numbers](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_C) | 变量交换              | [Code](code/Swapping_Two_Numbers.py) | [Editorial](editorials/Swapping_Two_Numbers.md) |
+|                                  | [How many divisors?](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_D) | 整除性测试           | [Code](code/How_many_divisors.py) | [Editorial](editorials/How_many_divisors.md) |
+| **Topic 4: Computation**         | [A / B Problem](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_4_A) | 浮点数精度       | [Code](code/A_B_Problem.py) | [Editorial](editorials/A_B_Problem.md) |
+|                                  | [Circle](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_4_B) | 常数PI和圆数学    | [Code](code/Circle.py) | [Editorial](editorials/Circle.md) |
+|                                  | [Simple Calculator](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_4_C) | 运算符模拟        | [Code](code/Simple_Calculator.py) | [Editorial](editorials/Simple_Calculator.md) |
+|                                  | [Min, Max and Sum](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_4_D) | 序列统计            | [Code](code/Min_Max_and_Sum.py) | [Editorial](editorials/Min_Max_and_Sum.md) |
+| **Topic 5: Structured Program I**| [Print a Rectangle](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_5_A) | 嵌套循环（模式）         | [Code](code/Print_a_Rectangle.py) | [Editorial](editorials/Print_a_Rectangle.md) |
+|                                  | [Print a Frame](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_5_B) | 条件边界打印  | [Code](code/Print_a_Frame.py) | [Editorial](editorials/Print_a_Frame.md) |
+|                                  | [Print a Chessboard](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_5_C) | 奇偶逻辑 (i+j)%2           | [Code](code/Print_a_Chessboard.py) | [Editorial](editorials/Print_a_Chessboard.md) |
+|                                  | [Structured Programming](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_5_D) | 控制流模拟        | [Code](code/Structured_Programming.py) | [Editorial](editorials/Structured_Programming.md) |
+| **Topic 6: Array**               | [Reversing a Sequence](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_6_A) | 数组/列表反转            | [Code](code/Reversing_a_Sequence.py) | [Editorial](editorials/Reversing_a_Sequence.md) |
+|                                  | [Finding Missing Cards](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_6_B) | 二维布尔标记             | [Code](code/Finding_Missing_Cards.py) | [Editorial](editorials/Finding_Missing_Cards.md) |
+|                                  | [Official House](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_6_C) | 三维数组应用           | [Code](code/Official_House.py) | [Editorial](editorials/Official_House.md) |
+|                                  | [Matrix Vector Multiplication](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_6_D) | 线性代数基础          | [Code](code/Matrix_Vector_Multiplication.py) | [Editorial](editorials/Matrix_Vector_Multiplication.md) |
+| **Topic 7: Structured Program II**| [Grading](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_7_A) | 复杂条件分支  | [Code](code/Grading.py) | [Editorial](editorials/Grading.md) |
+|                                  | [How many ways?](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_7_B) | 三重循环/组合    | [Code](code/How_many_ways.py) | [Editorial](editorials/How_many_ways.md) |
+|                                  | [Spreadsheet](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_7_C) | 行和列求和       | [Code](code/Spreadsheet.py) | [Editorial](editorials/Spreadsheet.md) |
+|                                  | [Matrix Multiplication](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_7_D) | 矩阵-矩阵乘积          | [Code](code/Matrix_Multiplication.py) | [Editorial](editorials/Matrix_Multiplication.md) |
+| **Topic 8: Character**           | [Toggling Cases](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_8_A) | 字符大小写转换      | [Code](code/Toggling_Cases.py) | [Editorial](editorials/Toggling_Cases.md) |
+|                                  | [Sum of Numbers](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_8_B) | 字符串转数字处理     | [Code](code/Sum_of_Numbers.py) | [Editorial](editorials/Sum_of_Numbers.md) |
+|                                  | [Counting Characters](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_8_C) | 频率数组（ASCII）        | [Code](code/Counting_Characters.py) | [Editorial](editorials/Counting_Characters.md) |
+|                                  | [Ring](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_8_D) | 循环字符串搜索         | [Code](code/Ring.py) | [Editorial](editorials/Ring.md) |
+| **Topic 9: String**              | [Finding a Word](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_9_A) | 单词匹配                  | [Code](code/Finding_a_Word.py) | [Editorial](editorials/Finding_a_Word.md) |
+|                                  | [Shuffle](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_9_B) | 字符串切片和连接 | [Code](code/Shuffle.py) | [Editorial](editorials/Shuffle.md) |
+|                                  | [Card Game](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_9_C) | 字典序比较     | [Code](code/Card_Game.py) | [Editorial](editorials/Card_Game.md) |
+|                                  | [String Manipulation](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_9_D) | 反转、替换、打印操作 | [Code](code/String_Manipulation.py) | [Editorial](editorials/String_Manipulation.md) |
+| **Topic 10: Math Functions**     | [Distance](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_10_A) | 欧几里得距离公式     | [Code](code/Distance.py) | [Editorial](editorials/Distance.md) |
+|                                  | [Triangle](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_10_B) | 三角函数（sin/cos/弧度）     | [Code](code/Triangle.py) | [Editorial](editorials/Triangle.md) |
+|                                  | [Standard Deviation](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_10_C) | 统计计算        | [Code](code/Standard_Deviation.py) | [Editorial](editorials/Standard_Deviation.md) |
+|                                  | [Distance II](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_10_D) | 闵可夫斯基距离             | [Code](code/Distance_II.py) | [Editorial](editorials/Distance_II.md) |
+| **Topic 11: Structure and Class**| [Dice I](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_11_A) | 骰子滚动模拟        | [Code](code/Dice_I.py) | [Editorial](editorials/Dice_I.md) |
+|                                  | [Dice II](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_11_B) | 旋转和匹配面    | [Code](code/Dice_II.py) | [Editorial](editorials/Dice_II.md) |
+|                                  | [Dice III](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_11_C) | 识别等价骰子    | [Code](code/Dice_III.py) | [Editorial](editorials/Dice_III.md) |
+|                                  | [Dice IV](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_11_D) | 管理多个骰子对象 | [Code](code/Dice_IV.py) | [Editorial](editorials/Dice_IV.md) |

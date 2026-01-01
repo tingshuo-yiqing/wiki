@@ -15,3 +15,5 @@
 ## 学习目标
 
 通过完成[Aizu Online Judge](https://onlinejudge.u-aizu.ac.jp/)上的问题，全面掌握数据结构与算法的核心知识点，并提升编程能力。
+
+如果有时间会增加c++和java语言
