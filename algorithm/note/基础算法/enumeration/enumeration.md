@@ -15,21 +15,33 @@ for i in range(1 << n):  # 遍历 0 到 2^n - 1
 
 
 
-## 递归枚举
+## 指数型枚举
 
-### 递归实现指数型枚举
-
-
+递归实现指数型枚举
 
 
 
-### 递归实现排列型枚举
+## 排列型枚举
+
+### 库函数法
+
+使用库函数 `itertools.permutations`进行枚举。
+
+### 搜索
+
+比赛时能使用 `itertools.permutations` 就不要手写，平时练习可以手写搜索，因为Python内置的 `permutations` 是由C语言实现的，相对而言比手写的递归快很多，除非一些题目需要剪枝。
 
 
 
+**题目推荐**：
 
+- 032 - AtCoder Ekiden（★3）
+- ABC183-C 「Travel」
+- ABC145-C 「Average Length」
+- ABC150-C 「Count Order」
+- ABC054-C 「One-Stroke Path」
 
-### 递归实现组合型枚举
+## 组合型枚举
 
 
 
