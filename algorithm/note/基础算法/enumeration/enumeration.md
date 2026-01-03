@@ -27,6 +27,20 @@ for i in range(1 << n):  # 遍历 0 到 2^n - 1
 
 使用库函数 `itertools.permutations`进行枚举。
 
+```python
+A = [1, 2, 3]
+for p in permutations(A):
+    print(*p)
+
+print()
+for p in permutations(range(4)):
+    for i in range(4):
+        print(p[i], end=' ')
+    print()
+```
+
+
+
 ### 搜索
 
 比赛时能使用 `itertools.permutations` 就不要手写，平时练习可以手写搜索，因为Python内置的 `permutations` 是由C语言实现的，相对而言比手写的递归快很多，除非一些题目需要剪枝。
