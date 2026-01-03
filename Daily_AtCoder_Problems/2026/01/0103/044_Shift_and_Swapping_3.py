@@ -17,23 +17,16 @@ def main():
     for _ in range(q):
         o = list(map(int, input().split()))
 
-        # if o[0] == 1:
-        #     a = (o[1] - 1 + off) % n
-        #     b = (o[2] - 1 + off) % n
-        #     nums[a], nums[b] = nums[b], nums[a]
-        # elif o[0] == 2:
-        #     off = (off - 1 + n) % n   # 右移o[1]次
-        # else:
-        #     idx = (o[1] - 1 + off) % n
-        #     outs.append(nums[idx])
-
         if o[0] == 1:
-            a, b = o[1] - 1, o[2] - 1
-            d[a], d[b] = d[b], d[a]
+            a = (o[1] - 1 + off) % n
+            b = (o[2] - 1 + off) % n
+            nums[a], nums[b] = nums[b], nums[a]
         elif o[0] == 2:
-            d.rotate(1)   # 正数右移，负数左移
+            off = (off - 1) % n   # 右移1次
         else:
-            outs.append(d[o[1] - 1])    
+            idx = (o[1] - 1 + off) % n
+            outs.append(nums[idx])
+
     print(*outs,sep='\n')
 
 if __name__ == "__main__":
