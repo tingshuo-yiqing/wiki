@@ -1,6 +1,6 @@
 ## [038. Large LCM（★3）](https://atcoder.jp/contests/typical90/tasks/typical90_al)
 
-考察大数处理，Python的话没有这个顾虑直接模拟就可以了，但是C/C++的话必须**先乘后除**防止溢出，既然涉及到除法就得保证分母不为 $0$。具体为: 
+考察大数处理，Python的话没有这个顾虑直接模拟就可以了，但是C/C++的话必须**先除后乘**防止溢出，既然涉及到除法就得保证分母不为 $0$。具体为: 
 
 ```cpp
 // a * b / __gcd(a, b) > inf 变为两个除法的比较
@@ -29,6 +29,8 @@ else
 ## [C. Rotate and Sum Query](https://atcoder.jp/contests/abc425/tasks/abc425_c)
 
 考察数组偏移和前缀和，先对原数组进行前缀和，再记录偏移量。这里 $l$, $r$ 可能会出现 $l \gt r$ 的情况即分段了，此时直接求对应段的前缀和即: 
+
+
 $$
 \sum_{i=0}^{r}a_i+\sum_{i=l}^na_i
 $$
