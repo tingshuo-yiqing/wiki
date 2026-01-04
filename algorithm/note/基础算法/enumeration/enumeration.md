@@ -45,6 +45,9 @@ for p in permutations(range(4)):
 
 比赛时能使用 `itertools.permutations` 就不要手写，平时练习可以手写搜索，因为Python内置的 `permutations` 是由C语言实现的，相对而言比手写的递归快很多，除非一些题目需要剪枝。
 
+```python
+```
+
 
 
 **题目推荐**：
