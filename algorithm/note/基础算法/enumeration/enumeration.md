@@ -13,7 +13,9 @@ for i in range(1 << n):  # 遍历 0 到 2^n - 1
     print(f"{i}:", *subset)
 ```
 
+**题目推荐**：
 
+* [ABC197-C ORXOR](https://atcoder.jp/contests/abc197/tasks/abc197_c)
 
 ## 指数型枚举
 
@@ -39,16 +41,13 @@ for p in permutations(range(4)):
     print()
 ```
 
-
-
 ### 搜索
 
 比赛时能使用 `itertools.permutations` 就不要手写，平时练习可以手写搜索，因为Python内置的 `permutations` 是由C语言实现的，相对而言比手写的递归快很多，除非一些题目需要剪枝。
 
 ```python
+
 ```
-
-
 
 **题目推荐**：
 
