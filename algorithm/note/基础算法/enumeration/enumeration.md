@@ -1,6 +1,6 @@
 ## 二进制枚举
 
-通常用来枚举有顺序的子集和方案数
+通常用来枚举有顺序的子集和方案数，和对数组进行分段。
 
 ```python
 # 二进制枚举的非递归写法（板子）
@@ -15,7 +15,7 @@ for i in range(1 << n):  # 遍历 0 到 2^n - 1
 
 **题目推荐**：
 
-* [ABC197-C ORXOR](https://atcoder.jp/contests/abc197/tasks/abc197_c)
+* [ABC197-C ORXOR](https://atcoder.jp/contests/abc197/tasks/abc197_c)，对 $n-1$ 进行二进制枚举数组的分段
 
 ## 指数型枚举
 
