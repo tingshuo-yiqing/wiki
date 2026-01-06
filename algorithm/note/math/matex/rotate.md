@@ -1,1 +1,0 @@
-[B - Grid Rotation](https://atcoder.jp/contests/abc404/tasks/abc404_b)

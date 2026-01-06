@@ -15,6 +15,7 @@ for i in range(1 << n):  # 遍历 0 到 2^n - 1
 
 **题目推荐**：
 
+* [ITP2_11_A](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP2_11_A)，有顺序子集
 * [ABC197-C ORXOR](https://atcoder.jp/contests/abc197/tasks/abc197_c)，对 $n-1$ 进行二进制枚举数组的分段
 
 ## 指数型枚举
