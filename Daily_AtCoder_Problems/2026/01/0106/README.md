@@ -31,4 +31,13 @@ $$
 
 ## [D. Kadomatsu Subsequence](https://atcoder.jp/contests/abc439/tasks/abc439_d)
 
-考察枚举，
+题目条件为: 
+
+- $$1≤i,j,k≤N$$
+- $A_i:A_j:A_k=7:5:3$
+- $\min(i,j,k)=j$ $\text{or}$ $\max(i,j,k)=j$
+
+考察枚举，观察条件可以知道 $j$ 一定在 $i,k$ 的前面或后面，就可以根据这个条件进行遍历。
+
+在遍历过程中使用一个桶 $bucket$ 进行记录当存在符合条件的 $i,k$ 时，就可以直接通过乘法原理计算了: $bucket_i \times bucket_k$ 。
+
