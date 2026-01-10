@@ -51,7 +51,7 @@ d.rotate(-1) # 向左循环移动 1 位，O(1) 复杂度
 
 * ABC 199-C IPFL
 * ABC 189-E Rotate and Flip
-* ABC 410-C Rotatable Array
+* [ABC 410-C Rotatable Array]
 * [ABC 425-C Rotate and Sum Query](https://atcoder.jp/contests/abc425/tasks/abc425_c)
 * [典型90: 044 - Shift and Swapping (★3)](https://atcoder.jp/contests/typical90/tasks/typical90_ar)
 

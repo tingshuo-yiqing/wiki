@@ -23,7 +23,7 @@ def dfs(i, open):
 另一种方法更简单但是复杂度有点高——二进制枚举。先生成所有可能的序列再一个一个判断是否合法
 
 ```python
-def valid(path):
+def valid(path):   # 只有一种括号时的验证方法
     b = mb = 0
     for c in path:
         b += 1 if c == '(' else -1
@@ -41,9 +41,9 @@ for i in range(1 << n):
         outs.append(''.join(path))
 ```
 
-
-
 ### 验证栈序列
+
+上文的二进制枚举中的是判断序列中只有一类括号的方法，当序列中含有若干种类括号时需要栈来匹配。
 
 ```python
 ```
