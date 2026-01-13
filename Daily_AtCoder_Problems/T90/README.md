@@ -6,4 +6,4 @@
 * AtCoder [E869120](https://atcoder.jp/users/E869120)
 * CodeForces [E869120](https://codeforces.com/profile/E869120)
 
-从2026/1/4开始每天一题，两个月过完 ★2 ~ ★5 ，并完成部分类似题目。
+从2026/1/4开始每天一题使用PyPy3进行提交，两个月过完 ★2 ~ ★5 ，并完成部分类似题目。
