@@ -1,0 +1,12 @@
+import sys
+sys.setrecursionlimit(200000)
+
+input = lambda: sys.stdin.readline().strip()
+
+def main():
+    a, b, c = map(int, input().split())
+
+    print(a + b + c)
+
+if __name__ == "__main__":
+    main()
