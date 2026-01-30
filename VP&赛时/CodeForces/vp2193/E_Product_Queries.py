@@ -1,6 +1,5 @@
 import sys
-from math import inf
-
+from collections import deque
 input = lambda: sys.stdin.readline().strip()
 
 Max = lambda x, y: x if x > y else y
@@ -13,23 +12,32 @@ def main():
         n = int(input())
 
         a = list(map(int, input().split()))
-        a = sorted(list(set(a)))
+        a.sort()
 
-        dp = [inf] * (n + 1)
+        i = 0
+        for j in range(1, n):
+            if a[j] != a[i]:
+                i += 1
+                a[i] = a[j]
+        a = a[:i + 1]
 
+        d = deque(a)
+
+        vised = [-1] * (n + 1)
         for x in a:
-            dp[x] = 1
+            vised[x] = 1
         
-        for i in range(1, n + 1):
-            if dp[i] == inf:
-                continue
-            
+        while d:
+            u = d.popleft()
             for v in a:
-                if v * i > n:
+                if u * v > n:
                     break
-                dp[v * i] = Min(dp[v * i], dp[i] + 1)
-        
-        outs.append(' '.join(str(x) if x < inf else '-1' for x in dp[1:]))
+                cur = u * v
+                if vised[cur] == -1:
+                    vised[cur] = vised[u] + 1
+                    d.append(cur)
+                    
+        outs.append(' '.join(str(x) for x in vised[1:]))
     
     print('\n'.join(map(str, outs)))
 

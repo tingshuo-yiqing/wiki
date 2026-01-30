@@ -1,5 +1,34 @@
 
 
-* [P5745 区间最大和](https://www.luogu.com.cn/problem/P5745) Python会MLE使用C++
-* 
+## 应用
+
+### 基础应用
+
+#### 1. 有序序列去重
+
+两个指针，慢指针与块指针比较，不同则慢指针移动。空间 $O(1)$ 。
+
+```python
+i = 0  # 慢指针
+for j in range(1, len(a)): 
+    if a[j] != a[i]:       
+        i += 1             
+        a[i] = a[j]   
+a = a[:i + 1]
+```
+
+#### 2.游程编码(RLE)
+
+可以将连续重复出现的字符替换为 “字符+出现次数”。
+
+```python
+A = []
+i = 0
+while i < n:
+    j = i
+    while j < n and a[j] == s[i]:
+        j += 1
+    A.append((s[i], j - i))  
+    i = j
+```
 
