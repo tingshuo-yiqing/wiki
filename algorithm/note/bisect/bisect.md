@@ -30,3 +30,4 @@ for x in a:
 **例题：**
 
 * [CF 702C](https://codeforces.com/problemset/problem/702/C)
+* [T90-007](https://atcoder.jp/contests/typical90/tasks/typical90_g)
