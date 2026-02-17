@@ -1,5 +1,5 @@
 import sys
-from math import inf,atan2, dist, pi, sin, cos
+from math import atan2, dist, pi, sin, cos, degrees, radians
 if 1:
     inp = lambda: sys.stdin.readline().strip()
 
@@ -20,12 +20,12 @@ def main():
         t = II()
 
         t %= T
-        y = -r * sin(2 * pi * t / T)
-        z = r - r * cos(2 * pi * t / T)
+        y = -r * sin(radians(360 * t / T))
+        z = r - r * cos(radians(360 * t / T))
 
         A = dist((0, y), (X, Y))
         B = z
-        print(f'{atan2(B, A)*180/pi:.9f}')
+        print(f'{degrees(atan2(B, A)):.9f}')  # 弧度转角度直接使用degrees函数
         
 if __name__ == "__main__":
     main()

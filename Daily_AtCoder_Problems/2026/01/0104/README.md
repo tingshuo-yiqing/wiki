@@ -19,6 +19,32 @@ for i in range(1, n + 1):
     ans = max(ans, gcd(pf[i - 1], sf[i + 1]))
 ```
 
+### 前后缀分解模板
+
+```python
+def solve(arr):
+    n = len(arr)
+    pre = [0] * (n + 1)
+    suf = [0] * (n + 1)
+    
+    # 这里的 0 是 gcd 的单位元 (gcd(0, x) = x)
+    for i in range(n):
+        pre[i+1] = math.gcd(pre[i], arr[i])
+        
+    for i in range(n-1, -1, -1):
+        suf[i] = math.gcd(suf[i+1], arr[i])
+        
+    ans = 0
+    # 枚举被删掉的下标 i
+    for i in range(n):
+        # 核心：左边是 pre[i], 右边是 suf[i+1]
+        res = math.gcd(pre[i], suf[i+1])
+        ans = max(ans, res)
+    return ans
+```
+
+推荐这样模拟删除操作。
+
 ## [C.IPFL](https://atcoder.jp/contests/abc199/tasks/abc199_c)
 
 考察数组的下标映射。不要真的去模拟操作，一定会超时的。我们可以定义一个 $bool$ 变量判断此时数组是否处以翻转状态。

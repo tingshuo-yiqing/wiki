@@ -16,8 +16,6 @@ for r in range(n):
         ans += 1
 ```
 
-
-
 * [Subarray Sums I](https://cses.fi/problemset/task/1660)
 
 ***
@@ -81,3 +79,6 @@ for x in a:
 * [ABC 105-D Candy Distribution](https://atcoder.jp/contests/abc105/tasks/abc105_d)
 
 ***
+
+
+

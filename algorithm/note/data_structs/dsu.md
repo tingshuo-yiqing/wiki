@@ -10,10 +10,16 @@ class DSU:
         self._cc = n  # 连通块大小
     
     def find(self, x):
-        fa = self._fa
-        if fa[x] != x:
-            fa[x] = self.find(fa[x])
-        return fa[x]
+        root = x
+        while root != self._fa[root]:
+            root = self._fa[root]
+
+        # 路径压缩
+        while x != root:
+            temp = self._fa[x]
+            self._fa[x] = root
+            x = temp
+        return root
     
     def is_same(self, x, y):
         return self.find(x) == self.find(y)
@@ -85,8 +91,6 @@ if self._size[x] > self._size[y]: # 小挂大即可
 
 ```
 
-***
-
 ## 应用
 
 ### 0.标记信息
@@ -103,16 +107,4 @@ if self._size[x] > self._size[y]: # 小挂大即可
 
 [C. Cycle ](https://atcoder.jp/contests/abc404/tasks/abc404_c)，根据连通分量和度数判断是否是单环
 
-### 3.连通分量计数
 
-[ C - Cycle Graph?](https://atcoder.jp/contests/abc404/tasks/abc404_c)，单环的条件是：连通分量为1且所有节点度数为2
-
-[村村通工程](https://www.nowcoder.com/practice/d7561a459d3544728b9a9116ede7f276?tpId=388&tqId=11294717&channelPut=tracker1)，连通分量减一即可
-
-### 4.“时光倒流”删边技巧
-
-
-
-### 5.最近公共祖先
-
- Tarjan 离线算法利用并查集可以在$O(N+Q)$的时间内解决所有 LCA 查询。
