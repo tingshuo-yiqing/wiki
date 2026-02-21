@@ -1,8 +1,10 @@
 ## 赛后复盘
 
+赛时AB补CD
+
 ### [ Diverse Team](https://codeforces.com/contest/988/problem/A)
 
-使用一个哈希集合或字典维护当前的元素，最后判断不同的元素够不够 $m$ 哥。注意输出的是索引。
+使用一个哈希集合或字典维护当前的元素，最后判断不同的元素够不够 $m$ 个。注意输出的是索引。
 
 ### [Substrings Sort](https://codeforces.com/contest/988/problem/B)
 

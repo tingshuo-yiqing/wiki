@@ -97,14 +97,5 @@ if self._size[x] > self._size[y]: # 小挂大即可
 
 [E. Reach](https://atcoder.jp/contests/abc420/tasks/abc420_e)
 
-### 1.最小生成树（Kruskal算法）
-
-将所有边按边权排序，然后边加边边判断连通性。
-
-[修复公路](https://www.nowcoder.com/practice/8111efc8c04d472da349b6e5010e1951?tpId=388&tqId=11294690&channelPut=tracker1)，注意这里是可以同时修复的，去最大时间即可
-
-### 2.检测无向图种的环
-
-[C. Cycle ](https://atcoder.jp/contests/abc404/tasks/abc404_c)，根据连通分量和度数判断是否是单环
 
 
