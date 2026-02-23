@@ -8,6 +8,50 @@
 
 
 
+```python
+class BIT:
+    def __init__(self, n):
+        self.n = n
+        self.tree = [0] * (n + 1)
+
+    def add(self, i, x):
+        i += 1  # 0-indexed を 1-indexed に変換
+        while i <= self.n:
+            self.tree[i] += x
+            i += i & -i
+
+    def sum(self, i):
+        # 0からi番目までの合計を出す
+        s = 0
+        while i > 0:
+            s += self.tree[i]
+            i -= i & -i
+        return s
+
+    def query(self, l, r):
+        # [l, r) の範囲和を出す
+        return self.sum(r) - self.sum(l)
+
+n, q = map(int, input().split())
+a = list(map(int, input().split()))
+
+# 木の初期化
+ft = FenwickTree(n)
+for i, x in enumerate(a):
+    ft.add(i, x)
+
+for _ in range(q):
+    t, u, v = map(int, input().split())
+    if t == 0:
+        # 加算クエリ
+        ft.add(u, v)
+    else:
+        # 範囲和クエリ [u, v)
+        print(ft.query(u, v))
+```
+
+
+
 
 
 ## 2. 统计类模型

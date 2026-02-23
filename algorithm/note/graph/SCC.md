@@ -33,6 +33,6 @@ def tarjan(x):
             if cur == x:
                 break
         scc += 1
-# 测试链接: https://cses.fi/problemset/task/1683
+# 测试链接: https://cses.fi/problemset/task/1683，
 ```
 
