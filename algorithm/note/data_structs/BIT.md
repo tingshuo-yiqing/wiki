@@ -1,27 +1,81 @@
 树状数组（Binary Indexed Tree, BIT，也称 Fenwick Tree）是算法竞赛中极其常用的数据结构。它的核心优势在于：**代码短小精悍、常数极小、内存占用少**。
 
-虽然它的功能是线段树的子集，但在处理“动态前缀和”相关问题时，BIT 通常是首选。以下是 BIT 的常见作用和典型应用模型：
+虽然它的功能是线段树的子集，但在处理“动态前缀和”相关问题时，BIT 通常是首选。
 
-## 1. 基础三大模型（核心用法）
+<div align="center">
+    <img src="https://img2024.cnblogs.com/blog/3769106/202602/3769106-20260223230845974-1278954480.png" style="width: 80%; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <div style="color: #999; padding: 10px; font-size: 14px;">来自董晓算法，对两个关键函数原理的图解</div>
+</div>
 
-这是树状数组最基本的演变形式，主要通过**差分思想**实现功能的切换。
-
-
+BIT 结构模板为
 
 ```python
 class BIT:
     def __init__(self, n):
-        self.n = n
-        self.tree = [0] * (n + 1)
-
-    def add(self, i, x):
-        i += 1  # 0-indexed を 1-indexed に変換
-        while i <= self.n:
-            self.tree[i] += x
+        self.tree = [0] * (n + 1) # 初始化为一颗空树
+    
+    def add(self, i, val):
+        while i < len(self.tree):
+            self.tree[i] += val
             i += i & -i
+    
+    def pf(self, i):
+        s = 0
+        while i > 0:
+            s += self.tree[i]
+            i -= i & -i
+        return s
 
-    def sum(self, i):
-        # 0からi番目までの合計を出す
+    def query(self, l, r): # 查询区间为 [l, r]
+        return self.pf(r) - self.pf(l - 1)
+```
+
+**已知大小为 $n$ 的数组**，有两种初始化方式一种为 $O(n\log n)$ 一种为 $O(n)$ 。
+
+前者只需要调用 $n$ 次 `add` 函数即可，具体为
+
+```python
+bit = BIT(n)
+for i, x in enumerate(a):
+    bit.add(i + 1, x)  # 注意这里应该要 1-based 初始化
+```
+
+后者的话在初始化时传入的是数组而不是数组大小，具体为
+
+```python
+def __init__(self, arr):  # 传入数组
+    n = len(arr)
+    self.tree = [0] + arr[:]  # 列表加法可能会炸内存
+    for i in range(1, n + 1):
+        j = i + (i & -i)
+        if j <= n:
+            self.tree[j] += self.tree[i]
+```
+
+[P3374 【模板】树状数组 1](https://www.luogu.com.cn/problem/P3374) 点修区查
+
+```python
+import sys
+if 1:
+    inp = lambda: sys.stdin.readline().strip()
+
+    II = lambda: int(inp())
+    MII = lambda: map(int, inp().split())
+    LII = lambda: list(MII())
+
+    Max = lambda x, y: x if x > y else y
+    Min = lambda x, y: x if x < y else y
+
+class BIT:
+    def __init__(self, n):
+        self.tree = [0] * (n + 1)
+    
+    def add(self, i, val):
+        while i < len(self.tree):
+            self.tree[i] += val
+            i += i & -i
+    
+    def pf(self, i):
         s = 0
         while i > 0:
             s += self.tree[i]
@@ -29,45 +83,57 @@ class BIT:
         return s
 
     def query(self, l, r):
-        # [l, r) の範囲和を出す
-        return self.sum(r) - self.sum(l)
+        return self.pf(r) - self.pf(l - 1)
 
-n, q = map(int, input().split())
-a = list(map(int, input().split()))
+def main():
+    n, q = MII()
+    a = LII()
 
-# 木の初期化
-ft = FenwickTree(n)
-for i, x in enumerate(a):
-    ft.add(i, x)
+    bit = BIT(n)
+    for i, x in enumerate(a):
+        bit.add(i + 1, x)  # 1-based 初始化
 
-for _ in range(q):
-    t, u, v = map(int, input().split())
-    if t == 0:
-        # 加算クエリ
-        ft.add(u, v)
-    else:
-        # 範囲和クエリ [u, v)
-        print(ft.query(u, v))
+    outs = []
+    for _ in range(q):
+        o = LII()
+        if o[0] == 1:
+            bit.add(o[1], o[2])
+        else:
+            outs.append(bit.query(o[1], o[2]))
+    
+    print(*outs, sep='\n')
+
+if __name__ == "__main__":
+    main()
 ```
 
+这是树状数组最基本的演变形式，其它功能主要通过**差分思想**实现切换。比如可以使用一颗**空树状数组当作差分数组**，区修就变成了对这可空树进行两次点修，点查就变成了**原始值加修改值**了，即 `a[i] + sum(i)` 。
 
+[P3368 【模板】树状数组 2](https://www.luogu.com.cn/problem/P3368) 区修点查
 
+```python
+# 与上述代码相同的模板不再展示，直接复制即可
 
+def main():
+    n, q = MII()
+    a = LII()
 
-## 2. 统计类模型
+    bit = BIT(n)
 
-这类问题通常与“值域”有关，即将数值作为 BIT 的下标。
+    outs = []
+    for _ in range(q):
+        o = LII()
+        if o[0] == 1:
+            l, r, v = o[1:]
+            bit.add(l, v)
+            bit.add(r + 1, -v)  # 1-based 下的差分操作
+        else:
+            idx = o[1]
+            outs.append(a[idx - 1] + bit.sum(idx))
 
-#### ① 逆序对 / 正序对 / 三元组统计
-- **模型**：给定序列，统计满足 $i < j$ 且 $a[i] > a[j]$ 的对数。
-- **做法**：
-    1. 离散化（如果数值范围大）。
-    2. 从左往右遍历序列。
-    3. 先查询 BIT 中大于当前数 $a[j]$ 的个数（即已出现的、比它大的数）。
-    4. 将当前数 $a[j]$ 插入 BIT（`update(a[j], 1)`）。
-- **扩展**：如你刚才问的那道题，将“条件”转化为前缀和的大小关系，本质就是统计正序对。
+    print(*outs, sep='\n')
 
-#### ② 动态第 K 小（离散化 + 树状数组二分）
-- **模型**：集合中不断加入/删除数，查询当前集合第 $k$ 小的数。
-- **做法**：BIT 维护频率（下标是数值，`update(val, 1)`）。
-- **技巧**：不需要在 `query` 上套 $O(\log n)$ 的二分（会变成 $O(\log^2 n)$），可以利用 BIT 结构的二进制特性进行**倍增（Binary Lifting）**，在 $O(\log n)$ 时间内找到第 $k$ 小。
+if __name__ == "__main__":
+    main()
+```
+

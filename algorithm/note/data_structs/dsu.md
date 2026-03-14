@@ -1,101 +1,128 @@
-## 结构
+并查集是非常灵活和高效的数据结构，常见应用是维护无向图的连通分量个数、大小，最小生成树的 Kruskal 算法和最近公共祖先等。
 
-### 模板
+并查集维护了若干个不相交的集合，每个集合通过一棵树来组织，根节点为该集合的代表。
+
+三个基本操作：
+
+1. `init(n)` ：初始化含有 $n$ 个集合的并查集，每个集合的代表为自身。
+2. `find(x)` ：寻找元素 $x$ 所在集合的代表。
+3. `union(x, y)` ：将元素 $x,y$ **所在的集合**合并，如果已经是处于同一集合的话就不合并。
+
+一个简单的并查集示例，可以先看图理解，再理解代码结构。
+
+<div align="center">
+    <img src="https://img2024.cnblogs.com/blog/3769106/202603/3769106-20260304201820789-1091862260.jpg" style="width: 80%; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <div style="color: #999; padding: 10px; font-size: 14px;">并查集初始化、合并及查找图例</div>
+</div>
+
+图示的一个关键理解是：当 `fa[x] == x` 时，说明 `x` 是根节点。**很多题目按这个来找所有集合的代表**，比如将所有连通分量相连时，就可以按 `root1 - root2, root2 - root3 ···` 来将分量连起来
+
+### 初始化
+
+初始化代码
 
 ```python
-class DSU:
-    def __init__(self, n) -> None:
-        self._fa = list(range(n + 1))  # 默认节点是[1, n]
-        self._size = [1] * (n + 1)
-        self._cc = n  # 连通块大小
-    
-    def find(self, x):
-        root = x
-        while root != self._fa[root]:
-            root = self._fa[root]
-
-        # 路径压缩
-        while x != root:
-            temp = self._fa[x]
-            self._fa[x] = root
-            x = temp
-        return root
-    
-    def is_same(self, x, y):
-        return self.find(x) == self.find(y)
-    
-    def merge(self, from_, to_):
-        x, y = self.find(from_), self.find(to_)
-        if x == y:
-            return False
-        self._fa[x] = y # 将x挂到y上
-        self._size[y] += self._size[x] # 合并大小
-        self._cc -= 1  # 连通块大小减一
-        return True
-    
-    def get_size(self, x):
-        return self._size[self.find(x)]  # 当前节点所在集合的大小保存在根上
-    
-    def get_count(self):  # 返回连通块数量
-        return self._cc
+def __init__(self, n):
+    self.fa = list(range(n + 1))
 ```
 
-[并查集](https://www.nowcoder.com/practice/513111e4477c4fad8f19f14d4cdf49dc?tpId=388&tqId=11077218&channelPut=tracker1)，需要**启发式合并**或**按秩合并**不然会递归过深，不优化合并的话迭代路径压缩也可以过
+### find函数
 
-### 查找
+`find` 函数查找到元素所在集合的根，并且在查找过程中进行**路径压缩**（Path Compression）。
 
-`2`种常见**路径压缩**方式：递归和迭代。
+路径压缩目的是把树的高度压低，使得长链可以变成扁平的放射状，从而大大降低时间复杂度。
 
-#### 递归
-
-如果不优化合并的话容易，容易达到递归最大深度(python)
+递归写法（直观、适合带权并查集写法）
 
 ```python
 def find(self, x):
-    fa = self._fa
-    if fa[x] != x:
-        fa[x] = self.find(fa[x])
-    return fa[x]
-```
-
-#### 迭代
-
-```python
-def find(self, x):
-    root = x
-    while root != self._fa[root]:
-        root = self._fa[root]
-
-    # 路径压缩
-    while x != root:
-        temp = self._fa[x]
-        self._fa[x] = root
-        x = temp
+    if self.fa[x] == x:
+        return x
+    
+    root = self.find(self.fa[x]) 
+    self.fa[x] = root 
     return root
 ```
 
+非递归写法（Python 推荐，避免栈溢出）
+
+这里采用**路径减半**策略，效率高且代码简洁。
+
+```python
+def find(self, x):
+    while self.fa[x] != x:
+        
+        self.fa[x] = self.fa[self.fa[x]]
+        x = self.fa[x]
+    return x
+```
+
+在查找时**当自身不是根时**往上跳，跳到根节点，然后再返回的过程中改变途径节点的父节点，统一改成根。
+
 ### 合并
 
-`2`种常见的合并方式：启发式和按秩
-
-#### 启发式合并
+合并的话先使用 `find` 函数找到对应的根，再链接即可。
 
 ```python
-if self._size[x] > self._size[y]: # 小挂大即可
-    x, y = y, x
+def union(self, x, y):
+    rx = self.find(x)
+    ry = self.find(y)
+    if rx != ry:
+        self.fa[rx] = ry  # 将 rx -> ry
 ```
 
-#### 按秩合并
+这里也可以使用一个简单的启发式策略——按秩合并。维护一个 `size` 数组把小集合挂到大集合里去。
 
 ```python
-
+def union(self, x, y):
+    rx = self.find(x)
+    ry = self.find(y)
+    if rx != ry:
+        self.fa[rx] = ry  # 将 rx -> ry
+        if size[rx] > size[ry]:
+            rx, ry = ry, rx
+        self.fa[rx] = ry
+        size[ry] += size[rx]
 ```
 
-## 应用
+### 获取根数组
 
-### 0.标记信息
+一个很重要的操作，利用前面提到的理解：当 `fa[x] == x` 时，说明 `x` 是根节点。获取所有集合的根。
 
-[E. Reach](https://atcoder.jp/contests/abc420/tasks/abc420_e)
+```python
+    def get_root(self):  
+        return [x for x in range(1, len(self.fa)) if self.fa[x] == x]
+```
 
+### 模板
 
+具体模板为
+
+```python
+class DSU:
+    def __init__(self, n):
+        self.fa = list(range(n + 1))
+    
+    def find(self, x):
+        while self.fa[x] != x:
+            self.fa[x] = self.fa[self.fa[x]]
+            x = self.fa[x]
+        return x
+    
+    def union(self, x, y):
+        rx = self.find(x)
+        ry = self.find(y)
+        if rx != ry:
+            self.fa[rx] = ry
+    
+    def is_same(self, x, y):  # 判断两元素是否在同一集合
+        rx = self.find(x)
+        ry = self.find(y)
+        return rx == ry
+    
+    def get_root(self):  
+        return [x for x in range(1, len(self.fa)) if self.fa[x] == x]
+```
+
+### 例题
 

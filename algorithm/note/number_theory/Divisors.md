@@ -1,4 +1,6 @@
-### 唯一分解定理 (Fundamental Theorem of Arithmetic)
+[2182 Divisor Analysis - CSES](https://vjudge.net/problem/CSES-2182) 套约数的三个公式即可
+
+### 唯一分解定理
 
 任何一个大于 1 的整数 $n$ 都可以唯一地分解为若干个质数的乘积。
 其标准分解式为：
@@ -28,7 +30,7 @@ if n != 1:  # 千万不要忘记了
     print(n, 1)
 ```
 
-### 约数定理 (Divisor Theorem)
+### 约数定理
 
 基于唯一分解式 $n = \prod_{i=1}^{k} p_i^{a_i}$，我们可以推导出约数的性质。
 
@@ -115,7 +117,3 @@ def decompos(n):
 ### 约数之积
 
 
-
-
-
-模板题； [ Divisor Analysis](https://vjudge.net/problem/CSES-2182) 已经给出了唯一分解的结果了，直接一次遍历可求上述三个公式的结果
