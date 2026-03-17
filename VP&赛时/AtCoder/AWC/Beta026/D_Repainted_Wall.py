@@ -1,4 +1,5 @@
 import sys
+from collections import defaultdict
 
 Max = lambda x, y: x if x > y else y
 Min = lambda x, y: x if x < y else y
@@ -25,31 +26,23 @@ else:
 def main():
     n, k = MII()
 
-    a = LII()
-
-    nxt = [0] * (n + 1)
-    for i, x in enumerate(a):
-        nxt[i + 1] = x
+    d = defaultdict(int)
+    for _ in range(n):
+        l, r = MII()
+        d[l] += 1
+        d[r] -= 1
     
-    vised = {}
-    pos = 1
-    step = 0
-    order = []
-
-    while pos not in vised:
-        vised[pos] = step
-        order.append(pos)
-        pos = nxt[pos]
-        step += 1
+    coor = sorted(d.items())
     
-    tail_size = vised[pos]
-    cycle_size = step - tail_size
+    ans = 0
+    cur = 0
+    pre = 0  #! 前一个坐标
+    for x, delta in coor:  #! 顺序枚举当前坐标
+        if cur >= k:
+            ans += (x - pre)  #! 相邻区间大小
+        cur += delta
+        pre = x
 
-    if k < tail_size:
-        ans = order[k]
-    else:
-        ans = order[tail_size + (k - tail_size) % cycle_size]
-    
     print(ans)
 
 if __name__ == "__main__":

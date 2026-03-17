@@ -27,30 +27,19 @@ def main():
 
     a = LII()
 
-    nxt = [0] * (n + 1)
-    for i, x in enumerate(a):
-        nxt[i + 1] = x
+    s = sum(a)
     
-    vised = {}
-    pos = 1
-    step = 0
-    order = []
+    t = 0
+    for x in a:
+        if t + x<= k:
+            t += x
 
-    while pos not in vised:
-        vised[pos] = step
-        order.append(pos)
-        pos = nxt[pos]
-        step += 1
-    
-    tail_size = vised[pos]
-    cycle_size = step - tail_size
-
-    if k < tail_size:
-        ans = order[k]
+    if t < s - t:
+        print("Aoki")
+    elif t == s - t:
+        print("Draw")
     else:
-        ans = order[tail_size + (k - tail_size) % cycle_size]
-    
-    print(ans)
+        print("Takahashi")
 
 if __name__ == "__main__":
     main()
