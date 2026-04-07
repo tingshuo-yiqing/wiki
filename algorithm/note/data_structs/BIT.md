@@ -54,86 +54,8 @@ def __init__(self, arr):  # 传入数组
 
 [P3374 【模板】树状数组 1](https://www.luogu.com.cn/problem/P3374) 点修区查
 
-```python
-import sys
-if 1:
-    inp = lambda: sys.stdin.readline().strip()
-
-    II = lambda: int(inp())
-    MII = lambda: map(int, inp().split())
-    LII = lambda: list(MII())
-
-    Max = lambda x, y: x if x > y else y
-    Min = lambda x, y: x if x < y else y
-
-class BIT:
-    def __init__(self, n):
-        self.tree = [0] * (n + 1)
-    
-    def add(self, i, val):
-        while i < len(self.tree):
-            self.tree[i] += val
-            i += i & -i
-    
-    def pf(self, i):
-        s = 0
-        while i > 0:
-            s += self.tree[i]
-            i -= i & -i
-        return s
-
-    def query(self, l, r):
-        return self.pf(r) - self.pf(l - 1)
-
-def main():
-    n, q = MII()
-    a = LII()
-
-    bit = BIT(n)
-    for i, x in enumerate(a):
-        bit.add(i + 1, x)  # 1-based 初始化
-
-    outs = []
-    for _ in range(q):
-        o = LII()
-        if o[0] == 1:
-            bit.add(o[1], o[2])
-        else:
-            outs.append(bit.query(o[1], o[2]))
-    
-    print(*outs, sep='\n')
-
-if __name__ == "__main__":
-    main()
-```
+[P3368 【模板】树状数组 2](https://www.luogu.com.cn/problem/P3368) 区修点查
 
 这是树状数组最基本的演变形式，其它功能主要通过**差分思想**实现切换。比如可以使用一颗**空树状数组当作差分数组**，区修就变成了对这可空树进行两次点修，点查就变成了**原始值加修改值**了，即 `a[i] + sum(i)` 。
 
-[P3368 【模板】树状数组 2](https://www.luogu.com.cn/problem/P3368) 区修点查
-
-```python
-# 与上述代码相同的模板不再展示，直接复制即可
-
-def main():
-    n, q = MII()
-    a = LII()
-
-    bit = BIT(n)
-
-    outs = []
-    for _ in range(q):
-        o = LII()
-        if o[0] == 1:
-            l, r, v = o[1:]
-            bit.add(l, v)
-            bit.add(r + 1, -v)  # 1-based 下的差分操作
-        else:
-            idx = o[1]
-            outs.append(a[idx - 1] + bit.sum(idx))
-
-    print(*outs, sep='\n')
-
-if __name__ == "__main__":
-    main()
-```
-
+**树状数组（BIT）本质上是一个维护“增量”或“前缀和”的辅助结构，它本身并不直接存储原数组的当前值。**

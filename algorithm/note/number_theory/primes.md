@@ -13,33 +13,47 @@ def is_prime(n):
 ### 埃氏筛
 
 ```python
-def sieve(n):
-    is_prime = [False] * 2 + [True] * (n - 2)
-    for i in range(2, int(n ** 0.5) + 1):
-        if is_prime[i]:
-            is_prime[i*i:n+1:i] = [False] * len(is_prime[i*i:n+1:i])  # 切片赋值，瞬间消耗大量内存但是时间很快
-    return is_prime
+MAXN = 10 ** 7 + 1
+
+is_prime = bytearray(b'\x01') * MAXN
+
+for i in range(2, int(MAXN**0.5) + 1):
+    if is_prime[i]:
+        for j in range(i * i, MAXN, i):
+            is_prime[j] = 0
+        # 切片赋值
+        # is_prime[i*i:MAXN:i] = b'\x00' * ((MAXN -1 - i*i)//i + 1)
+
+primes = array('I', (i for i in range(2, MAXN) if is_prime[i]))
 ```
 
-代码简洁，性价比高。由于切片优化的存在，在 Python 中处理 $10^7$ 以内的数字，埃氏筛往往比纯代码实现的线性筛还要快。
+切片赋值可以通过洛谷模板题
 
 ### 线性筛
 
 ```python
-def liner_sieve(n):
-    is_prime = [False] * 2 + [True] * (n - 2)
-    primes = []
-    for i in range(2, n):
-        if is_prime[i]:
-            primes.append(i)
-        for p in primes:
-            if p * i > n - 1: break
-            is_prime[i * p] = False
-            if i % p == 0: break
-    return primes
+#! 关键空间优化
+is_prime = bytearray([1]) * MAXN
+primes = array('I', [0]) * MAXN
+pcnt = 0
+
+for i in range(2, MAXN):
+    if is_prime[i]:
+        primes[pcnt] = i
+        pcnt += 1
+
+    j = 0
+    while j < pcnt:
+        p = primes[j]
+        if p * i > MAXN-1:
+            break
+        is_prime[p * i] = 0
+        if i % p == 0:
+            break
+        j += 1
 ```
 
-可扩展性强，在需要计算积性函数时的不二选择。
+可以通过洛谷的模板题
 
 ### 分段筛
 
@@ -62,7 +76,7 @@ if n != 1:  # 千万不要忘记了
     print(n, 1)
 ```
 
-### SPF筛
+
 
 
 
