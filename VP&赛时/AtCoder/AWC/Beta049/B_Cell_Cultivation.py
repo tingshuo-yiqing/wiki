@@ -1,4 +1,5 @@
 import sys
+from math import log2
 
 Max = lambda x, y: x if x > y else y
 Min = lambda x, y: x if x < y else y
@@ -23,15 +24,20 @@ else:
         sys.exit()
 
 def main():
-    n = II()
+    s, t, k = MII()
 
-    a = sorted(LII())
+    if t % s != 0:
+        print(-1)
+        return
+    
+    n = t // s
+    if n & (n - 1) == 0:
+        b = n.bit_length() - 1  #! 得到 log2(n)
+        if b <= k:
+            print(b)
+            return
 
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
-
-    print(abs(a[0] - a[-1]) * 2) 
+    print(-1)
 
 if __name__ == "__main__":
     main()

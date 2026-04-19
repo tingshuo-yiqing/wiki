@@ -1,4 +1,5 @@
 import sys
+from collections import deque
 
 Max = lambda x, y: x if x > y else y
 Min = lambda x, y: x if x < y else y
@@ -23,15 +24,12 @@ else:
         sys.exit()
 
 def main():
-    n = II()
+    n, k = MII()
+    a = LII()
 
-    a = sorted(LII())
+    dp = [0] * n
+    dp[0] = a[0]
 
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
-
-    print(abs(a[0] - a[-1]) * 2) 
 
 if __name__ == "__main__":
     main()

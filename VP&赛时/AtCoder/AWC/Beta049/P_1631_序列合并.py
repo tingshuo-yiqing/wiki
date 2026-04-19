@@ -1,4 +1,5 @@
 import sys
+from heapq import heappop, heappush
 
 Max = lambda x, y: x if x > y else y
 Min = lambda x, y: x if x < y else y
@@ -24,14 +25,27 @@ else:
 
 def main():
     n = II()
-
     a = sorted(LII())
+    b = sorted(LII())
 
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
+    hq = [(a[0] + b[0], 0, 0)]
 
-    print(abs(a[0] - a[-1]) * 2) 
+    vised = {(0, 0)}
+
+    outs = []
+    for _ in range(n):
+        v, i, j = heappop(hq)
+        outs.append(v)
+
+        if i + 1 < n and (i + 1, j) not in vised:
+            vised.add((i + 1, j))
+            heappush(hq, (a[i + 1] + b[j],i + 1, j))
+
+        if j + 1 < n and (i, j + 1) not in vised:
+            vised.add((i, j + 1))
+            heappush(hq, (a[i] + b[j + 1],i, j + 1))
+    
+    print(*outs)
 
 if __name__ == "__main__":
     main()

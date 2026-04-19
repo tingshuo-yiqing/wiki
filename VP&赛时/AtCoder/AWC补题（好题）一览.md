@@ -2,7 +2,7 @@
 
 ~~[AWC Beta0001E](https://atcoder.jp/contests/awc0001/tasks/awc0001_e)  单调队列~~ 
 
-[AWC Beta0002E](https://atcoder.jp/contests/awc0002/tasks/awc0002_e)  折半搜索
+~~[AWC Beta0002E](https://atcoder.jp/contests/awc0002/tasks/awc0002_e)  折半搜索~~ 
 
 [AWC Beta0003E](https://atcoder.jp/contests/awc0003/tasks/awc0003_e)  状态压缩DP（集合划分）
 
@@ -20,7 +20,23 @@
 
 [AWC Beta0009D](https://atcoder.jp/contests/awc0009/tasks/awc0009_d)  贪心（区间合并）+ 模拟
 
-[AWC Beta0021E](https://atcoder.jp/contests/awc0021/tasks/awc0021_e)  DP（带距离限制的01背包）																																		[AWC Beta0025D](https://atcoder.jp/contests/awc0025/tasks/awc0025_d)  建图（函数图） + 找循环节
+[AWC Beta0010C](https://atcoder.jp/contests/awc0010/tasks/awc0010_c?lang=en)  并查集（区间连通性）或前缀和（统计区间非法点个数判断该区间是否非法）
+
+~~[AWC Beta0010E](https://atcoder.jp/contests/awc0010/tasks/awc0010_e?lang=en)  全排列枚举 + 置换环~~ 
+
+~~[AWC Beta0011C](https://atcoder.jp/contests/awc0011/tasks/awc0011_c?lang=en)  利用或运算判断子掩码~~ 
+
+~~[AWC Beta0011D](https://atcoder.jp/contests/awc0011/tasks/awc0011_d?lang=en)  树上前缀和（利用约数线性枚举）~~ 
+
+[AWC Beta0011E](https://atcoder.jp/contests/awc0011/tasks/awc0011_e?lang=en)  前后缀分解 + 01背包变种（判断元素是否在最优解中）
+
+~~[AWC Beta0012E](https://atcoder.jp/contests/awc0012/tasks/awc0012_e?lang=en) 单调队列优化DP~~  
+
+~~[AWC Beta0013E](https://atcoder.jp/contests/awc0013/tasks/awc0013_e?lang=en)  二分图匹配~~ 
+
+~~[AWC Beta0014E](https://atcoder.jp/contests/awc0014/tasks/awc0014_e)  区修区查~~ 
+
+[AWC Beta0021E](https://atcoder.jp/contests/awc0021/tasks/awc0021_e)  DP（带距离限制的01背包）																																		[AWC Beta0025D](https://atcoder.jp/contests/awc0025/tasks/awc0025_d)  建图（函数图） + 找循环节（置换环）
 
 [AWC Beta0025E](https://atcoder.jp/contests/awc0025/tasks/awc0025_e)  树状数组 + 倍增 
 
@@ -74,6 +90,28 @@
 
 [AWC Beta0041D](https://atcoder.jp/contests/awc0041/tasks/awc0041_d)  贪心
 
-[AWC Beta0042D](https://atcoder.jp/contests/awc0042/tasks/awc0042_d)  前缀和 + 哈希表（K倍区间）
+~~[AWC Beta0042D](https://atcoder.jp/contests/awc0042/tasks/awc0042_d)  前缀和 + 哈希表（K倍区间）~~ 
 
 [AWC Beta0042E](https://atcoder.jp/contests/awc0042/tasks/awc0042_e)  单调队列或线段树优化DP
+
+[AWC Beta0043C](https://atcoder.jp/contests/awc0043/tasks/awc0043_c?lang=en)  DFS（利用约束线性枚举）
+
+[AWC Beta0043E](https://atcoder.jp/contests/awc0043/tasks/awc0043_e?lang=en)  数位DP
+
+[AWC Beta0044E](https://atcoder.jp/contests/awc0044/tasks/awc0044_a)  组合数学 + 动态规划
+
+[AWC Beta0045B](https://atcoder.jp/contests/awc0045/tasks/awc0045_b)  字符串匹配（KMP算法）
+
+~~[AWCBeta0046D](https://atcoder.jp/contests/awc0046/tasks/awc0046_d?lang=en)  二分 + 前缀和 + 滑动窗口（值域上的窗口）~~ 
+
+[AWC Beta0046E](https://atcoder.jp/contests/awc0046/tasks/awc0046_e?lang=en)  状压DP
+
+[AWC Beta0047E](https://atcoder.jp/contests/awc0047/tasks/awc0047_e)  Z函数
+
+~~[AWC Beta0048E](https://atcoder.jp/contests/awc0048/tasks/awc0048_e?lang=en)  折半搜索~~ 
+
+~~[AWC Beta0049D](https://atcoder.jp/contests/awc0049/tasks/awc0049_d?lang=en)  二叉堆（序列合并、前 $K$ 大元素）~~ 
+
+[AWC Beta0049E](https://atcoder.jp/contests/awc0049/tasks/awc0049_e?lang=en)  状压DP（困难）
+
+[AWC Beta0050E](https://atcoder.jp/contests/awc0050/tasks/awc0050_e?lang=en)  状压DP（简单）

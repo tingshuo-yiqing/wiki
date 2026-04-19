@@ -1,4 +1,6 @@
 import sys
+from math import inf
+from itertools import permutations
 
 Max = lambda x, y: x if x > y else y
 Min = lambda x, y: x if x < y else y
@@ -24,14 +26,22 @@ else:
 
 def main():
     n = II()
+    a = LII()
 
-    a = sorted(LII())
+    if n == 1:
+        print(a[0])
+        return
 
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
-
-    print(abs(a[0] - a[-1]) * 2) 
+    ans = inf
+    for p in permutations(range(1, n)):
+        t = abs(a[0] - a[p[0]]) * p[0]
+        for i in range(n - 2): 
+            t += abs(a[p[i + 1]] - a[p[i]]) * abs(p[i + 1] - p[i])
+            if t >= ans:
+                break
+        ans = Min(ans, t)
+    
+    print(ans)
 
 if __name__ == "__main__":
     main()

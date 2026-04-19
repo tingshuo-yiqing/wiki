@@ -1,4 +1,5 @@
 import sys
+sys.setrecursionlimit(200010)
 
 Max = lambda x, y: x if x > y else y
 Min = lambda x, y: x if x < y else y
@@ -23,15 +24,26 @@ else:
         sys.exit()
 
 def main():
-    n = II()
+    n, m = MII()
 
-    a = sorted(LII())
+    g = [[] for _ in range(n + 1)]
 
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
+    for _ in range(m):
+        u, v = MII()
+        g[u].append(v)
+    
+    vised = [0] * (n + 1)
 
-    print(abs(a[0] - a[-1]) * 2) 
+    def dfs(u):
+        vised[u] = 1
+
+        for v in g[u]:
+            if not vised[v]:
+                dfs(v)
+    
+    dfs(1)
+
+    print(sum(vised))
 
 if __name__ == "__main__":
     main()

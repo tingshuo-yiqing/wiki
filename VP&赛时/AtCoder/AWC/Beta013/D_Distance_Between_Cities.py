@@ -23,15 +23,26 @@ else:
         sys.exit()
 
 def main():
-    n = II()
+    n, m = MII()
 
-    a = sorted(LII())
+    g = [[] for _ in range(m)]
 
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
+    for _ in range(n):
+        v = LII()
+        for j in range(m):
+            g[j].append(v[j])
 
-    print(abs(a[0] - a[-1]) * 2) 
+    for i in range(m):
+        g[i].sort()
 
+    ans = 0
+    for a in g:
+        s = sum(a)
+        for i in range(n - 1):
+            s -= a[i]
+            ans += s - (n - i - 1) * a[i]
+
+    print(ans)
+    
 if __name__ == "__main__":
     main()

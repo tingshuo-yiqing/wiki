@@ -23,15 +23,19 @@ else:
         sys.exit()
 
 def main():
-    n = II()
+    n, m = MII()
+    a = LII()
 
-    a = sorted(LII())
-
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
-
-    print(abs(a[0] - a[-1]) * 2) 
+    s = set(a)
+    if len(s) == n:
+        print("Yes")
+    else:
+        print("No")
+    
+    if m <= n and len(s) == m:
+        print("Yes")
+    else:
+        print("No")
 
 if __name__ == "__main__":
     main()

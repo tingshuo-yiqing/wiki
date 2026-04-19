@@ -1,4 +1,5 @@
 import sys
+from math import isqrt  #! 大整数开方推荐使用isqrt(n)而不是 int(n**0.5)
 
 Max = lambda x, y: x if x > y else y
 Min = lambda x, y: x if x < y else y
@@ -24,14 +25,8 @@ else:
 
 def main():
     n = II()
-
-    a = sorted(LII())
-
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
-
-    print(abs(a[0] - a[-1]) * 2) 
+    
+    print(isqrt(n))
 
 if __name__ == "__main__":
     main()

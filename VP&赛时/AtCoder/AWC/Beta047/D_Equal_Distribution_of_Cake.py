@@ -24,14 +24,33 @@ else:
 
 def main():
     n = II()
+    a = LII()
 
-    a = sorted(LII())
+    s = sum(a)
+    if s % n != 0:
+        print(-1)
+        return
+    
+    t = s // n
 
-    # ans = abs(a[0]) + abs(a[-1])
+    ans = 0
+    #! 模拟版
     # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
+    #     d = abs(a[i] - t)
+    #     if a[i] < t:
+    #         a[i + 1] -= d
+    #     elif a[i] > t:
+    #         a[i + 1] += d 
+    #     ans += d
+    
+    #! 前缀和版
+    cur = 0
+    for i in range(n - 1):
+        d = a[i] - t
+        cur += d
+        ans += abs(cur)
 
-    print(abs(a[0] - a[-1]) * 2) 
+    print(ans)
 
 if __name__ == "__main__":
     main()

@@ -24,14 +24,20 @@ else:
 
 def main():
     n = II()
+    H = LII()
+    D = LII()
 
-    a = sorted(LII())
+    def check(i):
+        return H[i] != 0 and D[i] != 0 
 
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
+    dp = [0] * n
+    dp[0] = check(0)
+    dp[1] = dp[0] + check(1)
 
-    print(abs(a[0] - a[-1]) * 2) 
+    for i in range(2, n):
+        dp[i] = Min(dp[i-1], dp[i-2]) + check(i)
+    
+    print(dp[n - 1])
 
 if __name__ == "__main__":
     main()

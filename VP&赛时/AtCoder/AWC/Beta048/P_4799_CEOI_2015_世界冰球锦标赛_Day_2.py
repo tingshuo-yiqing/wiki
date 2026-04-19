@@ -1,4 +1,5 @@
 import sys
+from bisect import bisect, bisect_left
 from collections import defaultdict
 
 Max = lambda x, y: x if x > y else y
@@ -24,31 +25,38 @@ else:
         sys.exit()
 
 def main():
-    n, t = MII()
+    n, T = MII()
     a = LII()
 
     mid = n // 2
     a1 = a[:mid]
     a2 = a[mid:]
-    n1 = len(a1)
-    n2 = len(a2)
 
-    cnt = defaultdict(int)
-    for i in range(1 << n1):
-        s = 0
-        for j in range(n1):
-            s += a1[j] if (i >> j) & 1 else 0
-        if s <= t:
-            cnt[s] += 1
-    
+    def get_setsum(arr):
+        n = len(arr)
+        ret = []
+        for i in range(1 << n):
+            s = 0
+            ok = True
+            for j in range(n):
+                s += arr[j] if (i >> j) & 1 else 0
+                if s > T:
+                    ok = False
+                    break
+            if ok:
+                ret.append(s)
+        return ret
+
+    left = get_setsum(a1)
+    right = get_setsum(a2)
+
+    left.sort()
+
     ans = 0
-    for i in range(1 << n2):
-        s = 0
-        for j in range(n2):
-            s += a2[j] if (i >> j) & 1 else 0
-        if t - s in cnt:
-            ans += cnt[t - s]
-
+    for s in right:
+        t = T - s
+        ans += bisect(left, t)
+    
     print(ans)
 
 if __name__ == "__main__":

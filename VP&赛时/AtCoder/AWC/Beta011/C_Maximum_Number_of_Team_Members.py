@@ -1,4 +1,5 @@
 import sys
+from collections import Counter
 
 Max = lambda x, y: x if x > y else y
 Min = lambda x, y: x if x < y else y
@@ -23,15 +24,20 @@ else:
         sys.exit()
 
 def main():
-    n = II()
+    n, k = MII()
+    a = LII()
 
-    a = sorted(LII())
-
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
-
-    print(abs(a[0] - a[-1]) * 2) 
+    ans = 0
+    cur = 0
+    for x in a:
+        if (x | k) == k:
+            ans += 1
+            cur |= x   #! 所选的数必须要包含k的所有位
+    
+    if ans and cur == k:
+        print(ans)
+    else:
+        print(-1)
 
 if __name__ == "__main__":
     main()

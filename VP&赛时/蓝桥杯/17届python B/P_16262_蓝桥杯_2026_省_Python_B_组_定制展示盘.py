@@ -23,15 +23,28 @@ else:
         sys.exit()
 
 def main():
-    n = II()
+    for _ in range(II()):
+        n = II()
 
-    a = sorted(LII())
+        def is_prime(num):
+            for i in range(2, int(num ** 0.5) + 1):
+                if num % i == 0:
+                    return False
+            return n >= 2
 
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
+        if n <= 4:
+            print(4)
+        else:
+            if is_prime(n):
+                n += 1
+            print(n)
 
-    print(abs(a[0] - a[-1]) * 2) 
+        # if n <= 4:
+        #     print(4)
+        # else:
+        #     n += n & 1
+        #     print(n)
+
 
 if __name__ == "__main__":
     main()

@@ -1,4 +1,6 @@
 import sys
+from math import inf
+from bisect import bisect, bisect_left
 
 Max = lambda x, y: x if x > y else y
 Min = lambda x, y: x if x < y else y
@@ -23,15 +25,30 @@ else:
         sys.exit()
 
 def main():
-    n = II()
-
+    n, k = MII()
     a = sorted(LII())
 
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
+    pf = [0] * (n + 1)
+    for i in range(n):
+        pf[i + 1] = pf[i] + a[i]
 
-    print(abs(a[0] - a[-1]) * 2) 
+    def get_cost(s):
+        e = s + k - 1
+
+        l = bisect_left(a, s)
+        lv = l * s - pf[l]
+
+        r = bisect(a, e)
+        rv = (pf[n] - pf[r]) - (n - r) * e
+
+        return lv + rv
+
+    mi = inf
+    for x in a:
+        mi = Min(mi, get_cost(x))
+        mi = Min(mi, get_cost(x - (k - 1)))
+    
+    print(mi)
 
 if __name__ == "__main__":
     main()

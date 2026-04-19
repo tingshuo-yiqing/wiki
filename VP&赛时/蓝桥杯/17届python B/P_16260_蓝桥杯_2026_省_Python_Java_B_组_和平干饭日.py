@@ -1,5 +1,5 @@
 import sys
-
+sys.set_int_max_str_digits(10000)
 Max = lambda x, y: x if x > y else y
 Min = lambda x, y: x if x < y else y
 
@@ -23,15 +23,17 @@ else:
         sys.exit()
 
 def main():
-    n = II()
+    ans = 0
 
-    a = sorted(LII())
+    r = ''
+    for i in range(1, 2027):
+        r += str(i)
 
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
+        if int(r) % 26 == 0:
+            ans += 1
+    
+    print(ans)
 
-    print(abs(a[0] - a[-1]) * 2) 
 
 if __name__ == "__main__":
     main()

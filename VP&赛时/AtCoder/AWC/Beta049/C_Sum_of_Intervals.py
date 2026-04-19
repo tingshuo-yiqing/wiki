@@ -23,15 +23,20 @@ else:
         sys.exit()
 
 def main():
-    n = II()
+    n, k = MII()
+    a = LII()
 
-    a = sorted(LII())
+    ans = s = l = 0
+    for r, x in enumerate(a):
+        s += x
 
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
-
-    print(abs(a[0] - a[-1]) * 2) 
+        while s > k:
+            s -= a[l]
+            l += 1
+        
+        ans += r - l + 1
+    
+    print(ans)
 
 if __name__ == "__main__":
     main()

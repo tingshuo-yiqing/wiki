@@ -23,15 +23,31 @@ else:
         sys.exit()
 
 def main():
-    n = II()
+    n, k = MII()
 
-    a = sorted(LII())
+    T = []
+    for _ in range(n):
+        A, B = MII()
+        if A <= B:
+            T.append((A, 1))
+        else:
+            t = A // B
+            r = A % B
+            T.append((B, t))
+            T.append((r, 1))
 
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
+    T.sort(key=lambda x: -x[0])
 
-    print(abs(a[0] - a[-1]) * 2) 
+    ans = 0
+    for v, c in T:
+        if k - c >= 0:
+            k -= c
+            ans += v * c
+        else:
+            ans += k * v
+            break
+    
+    print(ans)
 
 if __name__ == "__main__":
     main()

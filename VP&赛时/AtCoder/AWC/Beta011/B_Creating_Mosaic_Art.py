@@ -23,15 +23,22 @@ else:
         sys.exit()
 
 def main():
-    n = II()
+    n, m, k = MII()
+    c1, c2 = inp().split()
 
-    a = sorted(LII())
+    g = [inp() for _ in range(n)]
 
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
-
-    print(abs(a[0] - a[-1]) * 2) 
+    res = []
+    for s in g:
+        t = []
+        for c in s:
+            t.append(c1 * k if c == '#' else c2 * k)
+        t = ''.join(t)
+        for _ in range(k):
+            res.append(t)
+    
+    for o in res:
+        print(o)
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,4 @@
 import sys
-from collections import defaultdict
 
 Max = lambda x, y: x if x > y else y
 Min = lambda x, y: x if x < y else y
@@ -24,31 +23,29 @@ else:
         sys.exit()
 
 def main():
-    n, t = MII()
-    a = LII()
+    n, m = MII()
 
-    mid = n // 2
-    a1 = a[:mid]
-    a2 = a[mid:]
-    n1 = len(a1)
-    n2 = len(a2)
-
-    cnt = defaultdict(int)
-    for i in range(1 << n1):
-        s = 0
-        for j in range(n1):
-            s += a1[j] if (i >> j) & 1 else 0
-        if s <= t:
-            cnt[s] += 1
+    g = [[]]
+    for _ in range(n):
+        g.append(LII()[1:])
     
+    match = [-1] * (m + 1)
     ans = 0
-    for i in range(1 << n2):
-        s = 0
-        for j in range(n2):
-            s += a2[j] if (i >> j) & 1 else 0
-        if t - s in cnt:
-            ans += cnt[t - s]
 
+    def dfs(u, vised):
+        for v in g[u]:
+            if not vised[v]:
+                vised[v] = True
+                if match[v] == -1 or dfs(match[v], vised):
+                    match[v] = u
+                    return True
+        return False
+    
+    for i in range(1, n + 1):
+        vised = [False] * (m + 1)
+        if dfs(i, vised):
+            ans += 1
+    
     print(ans)
 
 if __name__ == "__main__":

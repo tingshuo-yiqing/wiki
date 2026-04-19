@@ -23,15 +23,18 @@ else:
         sys.exit()
 
 def main():
-    n = II()
+    outs = []
+    for _ in range(II()):
+        n = II()
+        a = LII()
 
-    a = sorted(LII())
-
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
-
-    print(abs(a[0] - a[-1]) * 2) 
+        cnt = 0
+        for x in a:
+            cnt += 1 if x == 1 else 2
+        
+        outs.append('L' if cnt & 1 else 'Q')
+    
+    print('\n'.join(outs))
 
 if __name__ == "__main__":
     main()

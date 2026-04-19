@@ -23,15 +23,24 @@ else:
         sys.exit()
 
 def main():
-    n = II()
+    n, q = MII()
+    w = [-1] + LII()
+    p = LII()
 
-    a = sorted(LII())
+    fa = [0] * (n + 1)
+    for i, x in enumerate(p, start=2):
+        fa[i] = x
+    
+    pf = [0] * (n + 1)
+    for i in range(1, n + 1):
+        pf[i] = pf[fa[i]] + w[i]
+    
+    outs = []
+    for _ in range(q):
+        x = II()
+        outs.append(str(pf[x]))
 
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
-
-    print(abs(a[0] - a[-1]) * 2) 
+    print("\n".join(outs))
 
 if __name__ == "__main__":
     main()

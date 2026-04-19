@@ -24,14 +24,10 @@ else:
 
 def main():
     n = II()
+    a = LII()
+    b = LII()
 
-    a = sorted(LII())
-
-    # ans = abs(a[0]) + abs(a[-1])
-    # for i in range(n - 1):
-    #     ans += abs(a[i + 1] - a[i])
-
-    print(abs(a[0] - a[-1]) * 2) 
+    print(sum(abs(x - y) for x, y in zip(a, b)))
 
 if __name__ == "__main__":
     main()
