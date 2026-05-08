@@ -15,32 +15,6 @@ $$
 - `gcd(x, y)`
 - `and/or`
 
-```cpp
-#include <bits/stdc++.h>
-using namespace std;
-
-int main() {
-    int x;cin >> x;
-    cout << __gcd(x, x) << '\n';
-    cout << min(x, x) << '\n';
-    cout << max(x, x) << '\n';
-    cout << (x | x) << '\n';
-    cout << (x & x) << '\n';
-    return 0;
-}
-```
-
-```
-输入：
-5
-输出：
-5
-5
-5
-5
-5
-```
-
 
 
 ### 1.预处理ST表

@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>树上倍增求LCA - 笔记总结</title>
+<style>
+    :root {
+        --bg: #1e1e2e;
+        --card: #282840;
+        --text: #cdd6f4;
+        --sub: #a6adc8;
+        --accent: #89b4fa;
+        --red: #f38ba8;
+        --green: #a6e3a1;
+        --yellow: #f9e2af;
+        --purple: #cba6f7;
+        --border: #45475a;
+        --code-bg: #181825;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+        font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.8;
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 40px 24px;
+    }
+    h1 {
+        text-align: center;
+        font-size: 2.2em;
+        margin-bottom: 8px;
+        background: linear-gradient(135deg, var(--accent), var(--purple));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .subtitle { text-align:center; color: var(--sub); margin-bottom: 40px; font-size: 1.05em; }
+    h2 {
+        color: var(--accent);
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--border);
+        font-size: 1.45em;
+    }
+    h3 { color: var(--yellow); margin: 20px 0 10px; font-size: 1.15em; }
+    p { margin: 10px 0; color: var(--sub); }
+    .card {
+        background: var(--card);
+        border-radius: 12px;
+        padding: 24px 28px;
+        margin: 20px 0;
+        border: 1px solid var(--border);
+    }
+    .highlight { color: var(--accent); font-weight: bold; }
+    .em-red { color: var(--red); font-weight: bold; }
+    .em-green { color: var(--green); font-weight: bold; }
+    .em-yellow { color: var(--yellow); font-weight: bold; }
+    .code-block {
+        background: var(--code-bg);
+        border-radius: 8px;
+        padding: 18px 22px;
+        margin: 14px 0;
+        font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+        font-size: 0.92em;
+        overflow-x: auto;
+        border-left: 3px solid var(--accent);
+        white-space: pre;
+        line-height: 1.65;
+    }
+    .inline-code {
+        background: var(--code-bg);
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+        font-size: 0.9em;
+    }
+    ul, ol { margin: 8px 0 8px 24px; color: var(--sub); }
+    li { margin: 4px 0; }
+    svg { display: block; margin: 20px auto; max-width: 100%; }
+    .svg-caption { text-align: center; color: var(--sub); font-size: 0.9em; margin-top: -12px; margin-bottom: 20px; }
+    .table-wrap { overflow-x: auto; margin: 16px 0; }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        text-align: center;
+        font-size: 0.92em;
+    }
+    th, td {
+        border: 1px solid var(--border);
+        padding: 8px 12px;
+    }
+    th { background: var(--code-bg); color: var(--accent); }
+    td { color: var(--sub); }
+    .tag {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 0.82em;
+        font-weight: bold;
+        margin: 0 2px;
+    }
+    .tag-green { background: #a6e3a133; color: var(--green); }
+    .tag-red { background: #f38ba833; color: var(--red); }
+    .tag-blue { background: #89b4fa33; color: var(--accent); }
+    .tag-yellow { background: #f9e2af33; color: var(--yellow); }
+    .footnote {
+        margin-top: 48px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: #585b70;
+        font-size: 0.85em;
+    }
+</style>
+</head>
+<body>
+
+<h1>🌳 树上倍增法求 LCA</h1>
+<p class="subtitle">Lowest Common Ancestor �?Binary Lifting</p>
+
+<!-- ==================== 一、什么是LCA ==================== -->
+<h2>一、什么是 LCA</h2>
+<div class="card">
+    <p><span class="highlight">LCA（Lowest Common Ancestor，最近公共祖先）</span>：在一棵有根树中，节点 <span class="inline-code">u</span> �?<span class="inline-code">v</span> �?<span class="highlight">最近公共祖�?/span> 是深度最大的、同时是 <span class="inline-code">u</span> �?<span class="inline-code">v</span> 祖先的节点�?/p>
+
+    <p><strong>形象理解�?/strong>�?<span class="inline-code">u</span> �?<span class="inline-code">v</span> 各自向根方向走，<span class="em-yellow">第一个碰面的节点</span> 就是它们�?LCA�?/p>
+
+    <!-- SVG: 示例�?-->
+    <svg viewBox="0 0 700 420" width="700" height="420" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <radialGradient id="gNorm"><stop offset="0%" stop-color="#89b4fa"/><stop offset="100%" stop-color="#45475a"/></radialGradient>
+            <radialGradient id="gU"><stop offset="0%" stop-color="#f38ba8"/><stop offset="100%" stop-color="#6c3a4a"/></radialGradient>
+            <radialGradient id="gV"><stop offset="0%" stop-color="#f9e2af"/><stop offset="100%" stop-color="#6c5a3a"/></radialGradient>
+            <radialGradient id="gLCA"><stop offset="0%" stop-color="#a6e3a1"/><stop offset="100%" stop-color="#3a6c3a"/></radialGradient>
+            <filter id="shadow"><feDropShadow dx="1" dy="1" stdDeviation="2" flood-opacity="0.3"/></filter>
+        </defs>
+        <!-- �?-->
+        <line x1="350" y1="30" x2="350" y2="90" stroke="#585b70" stroke-width="2.5"/>
+        <line x1="350" y1="90" x2="190" y2="170" stroke="#585b70" stroke-width="2.5"/>
+        <line x1="350" y1="90" x2="510" y2="170" stroke="#585b70" stroke-width="2.5"/>
+        <line x1="190" y1="170" x2="100" y2="250" stroke="#585b70" stroke-width="2.5"/>
+        <line x1="190" y1="170" x2="280" y2="250" stroke="#585b70" stroke-width="2.5"/>
+        <line x1="510" y1="170" x2="420" y2="250" stroke="#585b70" stroke-width="2.5"/>
+        <line x1="510" y1="170" x2="600" y2="250" stroke="#585b70" stroke-width="2.5"/>
+        <line x1="100" y1="250" x2="50" y2="330" stroke="#585b70" stroke-width="2.5"/>
+        <line x1="100" y1="250" x2="150" y2="330" stroke="#585b70" stroke-width="2.5"/>
+        <line x1="420" y1="250" x2="370" y2="330" stroke="#585b70" stroke-width="2.5"/>
+        <line x1="420" y1="250" x2="470" y2="330" stroke="#585b70" stroke-width="2.5"/>
+
+        <!-- 节点�?-->
+        <circle cx="350" cy="30" r="22" fill="url(#gNorm)" filter="url(#shadow)"/>
+        <text x="350" y="36" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">1</text>
+
+        <circle cx="350" cy="90" r="22" fill="url(#gNorm)" filter="url(#shadow)"/>
+        <text x="350" y="96" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">2</text>
+
+        <circle cx="190" cy="170" r="22" fill="url(#gNorm)" filter="url(#shadow)"/>
+        <text x="190" y="176" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">3</text>
+
+        <circle cx="510" cy="170" r="22" fill="url(#gLCA)" filter="url(#shadow)"/>
+        <text x="510" y="176" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">4</text>
+        <text x="510" y="196" text-anchor="middle" fill="#a6e3a1" font-size="11">�?LCA(5,8)</text>
+
+        <circle cx="100" cy="250" r="22" fill="url(#gNorm)" filter="url(#shadow)"/>
+        <text x="100" y="256" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">6</text>
+
+        <circle cx="280" cy="250" r="22" fill="url(#gNorm)" filter="url(#shadow)"/>
+        <text x="280" y="256" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">7</text>
+
+        <circle cx="420" cy="250" r="22" fill="url(#gNorm)" filter="url(#shadow)"/>
+        <text x="420" y="256" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">8</text>
+
+        <circle cx="600" cy="250" r="22" fill="url(#gNorm)" filter="url(#shadow)"/>
+        <text x="600" y="256" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">9</text>
+
+        <circle cx="50" cy="330" r="22" fill="url(#gU)" filter="url(#shadow)"/>
+        <text x="50" y="336" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">u=10</text>
+
+        <circle cx="150" cy="330" r="22" fill="url(#gNorm)" filter="url(#shadow)"/>
+        <text x="150" y="336" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">11</text>
+
+        <circle cx="370" cy="330" r="22" fill="url(#gV)" filter="url(#shadow)"/>
+        <text x="370" y="336" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">v=12</text>
+
+        <circle cx="470" cy="330" r="22" fill="url(#gNorm)" filter="url(#shadow)"/>
+        <text x="470" y="336" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">13</text>
+
+        <!-- 图例 -->
+        <rect x="540" y="370" width="14" height="14" rx="3" fill="url(#gU)"/>
+        <text x="558" y="383" fill="#cdd6f4" font-size="12">节点 u</text>
+        <rect x="625" y="370" width="14" height="14" rx="3" fill="url(#gV)"/>
+        <text x="643" y="383" fill="#cdd6f4" font-size="12">节点 v</text>
+    </svg>
+    <p class="svg-caption">�?：一棵有根树。节�?<span style="color:#f38ba8">u=10</span> �?<span style="color:#f9e2af">v=12</span> �?LCA 是节�?<span style="color:#a6e3a1">4</span>（绿色高亮）�?/p>
+</div>
+
+<!-- ==================== 二、朴素做�?==================== -->
+<h2>二、朴素做法的问题</h2>
+<div class="card">
+    <p>最简单的思路�?/p>
+    <ol>
+        <li>先让 <span class="inline-code">u</span> �?<span class="inline-code">v</span> 爬到同一深度</li>
+        <li>然后一起一步一步向上爬，直到遇到同一个节�?/li>
+    </ol>
+    <p>这个做法 <strong>每次查询 O(n)</strong>，在有多次询问的场景下（�?<span class="inline-code">Q</span> 次询问）总复杂度�?<span class="em-red">O(n·Q)</span>，太慢了�?/p>
+    <p>我们需要一�?<span class="em-green">每次查询 O(log n)</span> 的方法—�?span class="highlight">树上倍增法（Binary Lifting�?/span>�?/p>
+</div>
+
+<!-- ==================== 三、倍增法核心思想 ==================== -->
+<h2>三、倍增法核心思想</h2>
+<div class="card">
+    <h3>3.1 二进制分解跳�?/h3>
+    <p>如果�?"向上�?<span class="inline-code">k</span> �? 看作一个操作，那么任何 <span class="inline-code">k</span> 都可以用二进制表示：</p>
+    <p style="text-align:center; font-size:1.1em;"><span class="highlight">k = 2<sup>a</sup> + 2<sup>b</sup> + 2<sup>c</sup> + �?/span></p>
+    <p>因此，如�?<strong>预先知道每个节点的第 2<sup>i</sup> 级祖�?/strong>（即向上�?2<sup>i</sup> 步到达的节点），那么任意步数的跳跃都可以由若干次 <strong>2 的幂次跳�?/strong> 组合完成�?/p>
+
+    <!-- SVG: 倍增跳跃示意 -->
+    <svg viewBox="0 0 640 260" width="640" height="260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <marker id="arrowR" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+                <path d="M0,0 L10,4 L0,8 Z" fill="#89b4fa"/>
+            </marker>
+            <marker id="arrowG" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+                <path d="M0,0 L10,4 L0,8 Z" fill="#a6e3a1"/>
+            </marker>
+            <marker id="arrowP" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+                <path d="M0,0 L10,4 L0,8 Z" fill="#cba6f7"/>
+            </marker>
+        </defs>
+        <!-- 祖先�?-->
+        <circle cx="320" cy="220" r="18" fill="#f38ba8"/>
+        <text x="320" y="226" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">u</text>
+        <circle cx="320" cy="170" r="18" fill="#89b4fa" opacity="0.6"/>
+        <text x="320" y="176" text-anchor="middle" fill="#fff" font-size="10">1</text>
+        <circle cx="320" cy="125" r="18" fill="#89b4fa" opacity="0.7"/>
+        <text x="320" y="131" text-anchor="middle" fill="#fff" font-size="10">2</text>
+        <circle cx="320" cy="80" r="18" fill="#89b4fa" opacity="0.85"/>
+        <text x="320" y="86" text-anchor="middle" fill="#fff" font-size="10">3</text>
+        <circle cx="320" cy="35" r="18" fill="#a6e3a1"/>
+        <text x="320" y="41" text-anchor="middle" fill="#fff" font-size="10">�?/text>
+
+        <!-- 边（垂直虚连接） -->
+        <line x1="320" y1="202" x2="320" y2="188" stroke="#585b70" stroke-width="2"/>
+        <line x1="320" y1="152" x2="320" y2="143" stroke="#585b70" stroke-width="2"/>
+        <line x1="320" y1="107" x2="320" y2="98" stroke="#585b70" stroke-width="2"/>
+        <line x1="320" y1="62" x2="320" y2="53" stroke="#585b70" stroke-width="2"/>
+
+        <!-- 右侧：倍增跳跃标注 -->
+        <text x="355" y="198" fill="#89b4fa" font-size="12">fa[u][0] = 向上 2�?= 1 �?/text>
+        <line x1="338" y1="195" x2="355" y2="195" stroke="#89b4fa" stroke-width="1.2" marker-end="url(#arrowR)"/>
+
+        <text x="355" y="153" fill="#89b4fa" font-size="12">fa[u][1] = 向上 2¹ = 2 �?/text>
+        <line x1="338" y1="150" x2="355" y2="150" stroke="#89b4fa" stroke-width="1.2" marker-end="url(#arrowR)"/>
+
+        <text x="355" y="108" fill="#89b4fa" font-size="12">fa[u][2] = 向上 2² = 4 �?/text>
+        <line x1="338" y1="105" x2="355" y2="105" stroke="#89b4fa" stroke-width="1.2" marker-end="url(#arrowR)"/>
+
+        <!-- 组合跳跃示例 -->
+        <rect x="90" y="195" width="200" height="55" rx="8" fill="none" stroke="#cba6f7" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="130" y="216" fill="#cba6f7" font-size="12">向上 5 �?= 4 + 1</text>
+        <text x="105" y="236" fill="#cba6f7" font-size="11">先走 2²，再�?2�?/text>
+    </svg>
+    <p class="svg-caption">�?：二进制分解跳跃示意。向上跳 5 = 101�?�?= 先跳 4 步（2²）再�?1 步（2⁰）�?/p>
+</div>
+
+<div class="card">
+    <h3>3.2 定义倍增数组</h3>
+    <p>定义 <span class="inline-code">fa[u][i]</span>：节�?<span class="inline-code">u</span> 向上�?<strong>2<sup>i</sup></strong> 步后到达的节点�?/p>
+    <p>则有 <span class="highlight">递推关系�?/span></p>
+    <p style="text-align:center; font-size:1.15em; margin:16px 0;">
+        <span class="highlight">fa[u][i] = fa[ fa[u][i-1] ][ i-1 ]</span>
+    </p>
+    <p>含义：向上跳 <strong>2<sup>i</sup></strong> �?= 先跳 <strong>2<sup>i-1</sup></strong> 步，再从那里�?<strong>2<sup>i-1</sup></strong> 步�?/p>
+
+    <!-- SVG：fa表推导示�?-->
+    <svg viewBox="0 0 580 200" width="580" height="200" xmlns="http://www.w3.org/2000/svg">
+        <!-- �?-->
+        <circle cx="50" cy="120" r="20" fill="#89b4fa"/>
+        <text x="50" y="126" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">v</text>
+
+        <circle cx="160" cy="120" r="20" fill="#cba6f7" opacity="0.7"/>
+        <text x="160" y="126" text-anchor="middle" fill="#fff" font-size="11">a</text>
+        <text x="160" y="148" text-anchor="middle" fill="#cba6f7" font-size="10">fa[u][i-1]</text>
+
+        <circle cx="270" cy="120" r="20" fill="#cba6f7" opacity="0.8"/>
+        <text x="270" y="126" text-anchor="middle" fill="#fff" font-size="11">b</text>
+
+        <circle cx="380" cy="120" r="20" fill="#a6e3a1"/>
+        <text x="380" y="126" text-anchor="middle" fill="#fff" font-size="11">c</text>
+        <text x="380" y="148" text-anchor="middle" fill="#a6e3a1" font-size="10">fa[u][i]</text>
+
+        <!-- 连线 -->
+        <line x1="70" y1="120" x2="140" y2="120" stroke="#585b70" stroke-width="2.5"/>
+        <line x1="180" y1="120" x2="250" y2="120" stroke="#585b70" stroke-width="2.5"/>
+        <line x1="290" y1="120" x2="360" y2="120" stroke="#585b70" stroke-width="2.5"/>
+
+        <!-- 标注步数 -->
+        <text x="105" y="108" fill="#f9e2af" font-size="11">2^{i-1}</text>
+        <text x="230" y="108" fill="#f9e2af" font-size="11">2^{i-1}</text>
+        <text x="323" y="108" fill="#a6e3a1" font-size="11">合计: 2^{i}</text>
+
+        <!-- 上弧线：从v直接到c -->
+        <path d="M50,100 Q215,40 380,100" fill="none" stroke="#a6e3a1" stroke-width="2" stroke-dasharray="6,3"/>
+        <text x="190" y="60" fill="#a6e3a1" font-size="12">fa[u][i] = fa[fa[u][i-1]][i-1]</text>
+    </svg>
+    <p class="svg-caption">�?：fa[u][i] 的递推计算。先跳到 fa[u][i-1]（紫色节�?a），再从 a �?2^{i-1} 步到 c�?/p>
+</div>
+
+<!-- ==================== 四、算法步�?==================== -->
+<h2>四、算法具体步�?/h2>
+
+<div class="card">
+    <h3>4.1 预处理（DFS / BFS�?/h3>
+    <p>�?<span class="inline-code">O(n log n)</span> 时间内完成：</p>
+    <ol>
+        <li>�?DFS / BFS 计算每个节点�?<span class="highlight">深度 depth[u]</span> �?<span class="highlight">直接父亲 fa[u][0]</span></li>
+        <li>�?<span class="inline-code">i = 1 �?log₂n</span>，用递推式计�?<span class="inline-code">fa[u][i]</span></li>
+    </ol>
+    <div class="code-block">
+<span style="color:#6c7086">// 预处理（BFS 版本�?/span>
+<span style="color:#cba6f7">void</span> <span style="color:#89b4fa">bfs</span>(<span style="color:#cba6f7">int</span> root) {
+    queue<<span style="color:#cba6f7">int</span>> q;
+    q.push(root);
+    depth[root] = <span style="color:#a6e3a1">1</span>;          <span style="color:#6c7086">// 根深度为 1（或 0，依习惯�?/span>
+    <span style="color:#cba6f7">while</span> (!q.empty()) {
+        <span style="color:#cba6f7">int</span> u = q.front(); q.pop();
+        <span style="color:#cba6f7">for</span> (<span style="color:#cba6f7">int</span> v : g[u]) {
+            <span style="color:#cba6f7">if</span> (v == fa[u][<span style="color:#a6e3a1">0</span>]) <span style="color:#cba6f7">continue</span>;
+            depth[v] = depth[u] + <span style="color:#a6e3a1">1</span>;
+            fa[v][<span style="color:#a6e3a1">0</span>] = u;
+            <span style="color:#cba6f7">for</span> (<span style="color:#cba6f7">int</span> i = <span style="color:#a6e3a1">1</span>; i <= LOG; i++)
+                fa[v][i] = fa[fa[v][i-<span style="color:#a6e3a1">1</span>]][i-<span style="color:#a6e3a1">1</span>];
+            q.push(v);
+        }
+    }
+}</div>
+    <p><span class="tag tag-yellow">注意</span> <span class="inline-code">LOG</span> 一般取 <span class="inline-code">⌈log₂n�?/span>，通常 <span class="inline-code">LOG = 20</span> 足以处理 n �?10�?的情况（因为 2²�?�?1,000,000）�?/p>
+</div>
+
+<div class="card">
+    <h3>4.2 查询 LCA(u, v)</h3>
+    <p>查询�?<strong>两步�?/strong>�?/p>
+
+    <p><span class="em-yellow">第①步：调整到同一深度</span></p>
+    <p>假设 <span class="inline-code">depth[u] > depth[v]</span>，让 <span class="inline-code">u</span> 向上�?<span class="inline-code">depth[u] - depth[v]</span> 步。这个差值用二进制分解，<strong>从大到小</strong>枚举 <span class="inline-code">i</span>�?/p>
+
+    <!-- SVG: 对齐深度演示 -->
+    <svg viewBox="0 0 620 280" width="620" height="280" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <marker id="arrUpR" markerWidth="8" markerHeight="7" refX="8" refY="3.5" orient="auto">
+                <path d="M0,0 L8,3.5 L0,7 Z" fill="#f38ba8"/>
+            </marker>
+        </defs>
+        <!-- 左侧：初始状态（两个节点深度不同�?-->
+        <text x="160" y="25" text-anchor="middle" fill="#cdd6f4" font-size="13" font-weight="bold">初始状�?/text>
+        <!-- 节点v -->
+        <circle cx="160" cy="65" r="16" fill="#f9e2af"/>
+        <text x="160" y="70" text-anchor="middle" fill="#000" font-size="11" font-weight="bold">v</text>
+        <text x="190" y="70" fill="#f9e2af" font-size="11">depth=3</text>
+        <!-- 虚线深度�?-->
+        <line x1="125" y1="65" x2="320" y2="65" stroke="#585b70" stroke-width="0.8" stroke-dasharray="4,3"/>
+
+        <!-- 节点u -->
+        <circle cx="160" cy="195" r="16" fill="#f38ba8"/>
+        <text x="160" y="200" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">u</text>
+        <text x="190" y="200" fill="#f38ba8" font-size="11">depth=6</text>
+        <line x1="125" y1="195" x2="320" y2="195" stroke="#585b70" stroke-width="0.8" stroke-dasharray="4,3"/>
+
+        <!-- 深度差标�?-->
+        <line x1="240" y1="65" x2="240" y2="195" stroke="#cba6f7" stroke-width="2" marker-end="url(#arrUpR)"/>
+        <text x="252" y="135" fill="#cba6f7" font-size="12">�?= 3</text>
+        <text x="252" y="152" fill="#cba6f7" font-size="11">= 2 + 1</text>
+
+        <!-- 箭头 -->
+        <text x="270" y="135" text-anchor="middle" fill="#a6e3a1" font-size="30">�?/text>
+
+        <!-- 右侧：跳完后同一深度 -->
+        <text x="440" y="25" text-anchor="middle" fill="#cdd6f4" font-size="13" font-weight="bold">调整后（同深度）</text>
+        <circle cx="440" cy="90" r="16" fill="#f9e2af"/>
+        <text x="440" y="95" text-anchor="middle" fill="#000" font-size="11" font-weight="bold">v</text>
+
+        <circle cx="440" cy="170" r="16" fill="#f38ba8"/>
+        <text x="440" y="175" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">u'</text>
+        <text x="475" y="90" fill="#f9e2af" font-size="11">depth=3</text>
+        <text x="475" y="175" fill="#f38ba8" font-size="11">depth=3 �?/text>
+
+        <line x1="405" y1="90" x2="500" y2="90" stroke="#585b70" stroke-width="0.8" stroke-dasharray="4,3"/>
+        <line x1="405" y1="170" x2="500" y2="170" stroke="#585b70" stroke-width="0.8" stroke-dasharray="4,3"/>
+    </svg>
+    <p class="svg-caption">�?：第①步——将深度较大�?u 提升到与 v 同一深度�?/p>
+
+    <!-- SVG: 深度差二进制分解细节 -->
+    <svg viewBox="0 0 720 330" width="720" height="330" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <marker id="aGreen" markerWidth="8" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L8,3.5 L0,7 Z" fill="#a6e3a1"/></marker>
+        </defs>
+        <!-- 祖先�?-->
+        <text x="360" y="22" text-anchor="middle" fill="#cdd6f4" font-size="13" font-weight="bold">深度�?diff = 6 的二进制分解实例</text>
+
+        <!-- 垂直�?-->
+        <circle cx="200" cy="280" r="17" fill="#f38ba8"/><text x="200" y="286" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">u</text>
+        <circle cx="200" cy="230" r="16" fill="#89b4fa" opacity="0.5"/><text x="200" y="235" text-anchor="middle" fill="#fff" font-size="10">1</text>
+        <circle cx="200" cy="180" r="16" fill="#89b4fa" opacity="0.55"/><text x="200" y="185" text-anchor="middle" fill="#fff" font-size="10">2</text>
+        <circle cx="200" cy="130" r="16" fill="#89b4fa" opacity="0.6"/><text x="200" y="135" text-anchor="middle" fill="#fff" font-size="10">3</text>
+        <circle cx="200" cy="80" r="16" fill="#89b4fa" opacity="0.65"/><text x="200" y="85" text-anchor="middle" fill="#fff" font-size="10">4</text>
+        <circle cx="200" cy="40" r="16" fill="#a6e3a1"/><text x="200" y="45" text-anchor="middle" fill="#000" font-size="10">v</text>
+
+        <line x1="200" y1="263" x2="200" y2="246" stroke="#585b70" stroke-width="2"/>
+        <line x1="200" y1="214" x2="200" y2="196" stroke="#585b70" stroke-width="2"/>
+        <line x1="200" y1="164" x2="200" y2="146" stroke="#585b70" stroke-width="2"/>
+        <line x1="200" y1="114" x2="200" y2="96" stroke="#585b70" stroke-width="2"/>
+        <line x1="200" y1="64" x2="200" y2="56" stroke="#585b70" stroke-width="2"/>
+
+        <!-- 右侧：二进制分解 -->
+        <text x="270" y="60" fill="#f9e2af" font-size="12" font-weight="bold">diff = 6 = 110�?/text>
+        <text x="270" y="82" fill="#a6adc8" font-size="11">分解�? 4(2²) + 2(2¹)</text>
+
+        <!-- 位表 -->
+        <rect x="270" y="95" width="400" height="85" rx="8" fill="#181825"/>
+        <text x="290" y="118" fill="#cba6f7" font-size="11" font-family="monospace">i:   3    2    1    0</text>
+        <text x="290" y="142" fill="#a6adc8" font-size="11" font-family="monospace">2�?  8    4    2    1</text>
+        <text x="290" y="168" fill="#f9e2af" font-size="11" font-family="monospace">bit: 0    1    1    0  �?6 的二进制</text>
+
+        <!-- 跳跃可视�?-->
+        <text x="270" y="205" fill="#a6e3a1" font-size="12" font-weight="bold">执行�?/text>
+        <!-- i=2 �?-->
+        <text x="270" y="230" fill="#cba6f7" font-size="12">i=2: bit=1 �?�?4 �?/text>
+        <path d="M222,275 Q250,255 222,235" fill="none" stroke="#cba6f7" stroke-width="2" marker-end="url(#aGreen)" stroke-dasharray="5,3"/>
+        <text x="235" y="260" fill="#a6e3a1" font-size="9">4�?/text>
+        <!-- i=1 �?-->
+        <text x="270" y="260" fill="#cba6f7" font-size="12">i=1: bit=1 �?�?2 �?/text>
+        <path d="M222,185 Q260,165 222,85" fill="none" stroke="#cba6f7" stroke-width="2" marker-end="url(#aGreen)" stroke-dasharray="5,3"/>
+        <text x="240" y="140" fill="#a6e3a1" font-size="9">2�?/text>
+        <!-- i=0 -->
+        <text x="270" y="290" fill="#a6adc8" font-size="12">i=0: bit=0 �?不跳</text>
+
+        <!-- 结果 -->
+        <text x="270" y="320" fill="#a6e3a1" font-size="12">�?共跳 6 步，到达 v 的深�?/text>
+    </svg>
+    <p class="svg-caption">�?b：深度差二进制分解详解。diff=6=110₂，循环 i=3�?�?�?，bit �?1 时才跳（i=2 �?4 �?+ i=1 �?2 步）�?/p>
+
+    <p style="margin-top:20px;"><span class="em-yellow">第②步：一起向上跳</span></p>
+    <p>�?<span class="inline-code">i = LOG</span> �?<span class="inline-code">0</span> 枚举，若 <span class="inline-code">fa[u][i] �?fa[v][i]</span>，则同时跳上去�?strong>注意：是跳到 LCA 的儿子为�?/strong>，最后返�?<span class="inline-code">fa[u][0]</span>�?/p>
+
+    <!-- SVG: 一起跳的分步演�?(以图1的树为例) -->
+    <svg viewBox="0 0 760 520" width="760" height="520" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <radialGradient id="gN"><stop offset="0%" stop-color="#89b4fa"/><stop offset="100%" stop-color="#45475a"/></radialGradient>
+            <radialGradient id="gU2"><stop offset="0%" stop-color="#f38ba8"/><stop offset="100%" stop-color="#6c3a4a"/></radialGradient>
+            <radialGradient id="gV2"><stop offset="0%" stop-color="#f9e2af"/><stop offset="100%" stop-color="#6c5a3a"/></radialGradient>
+            <radialGradient id="gL"><stop offset="0%" stop-color="#a6e3a1"/><stop offset="100%" stop-color="#3a6c3a"/></radialGradient>
+            <filter id="sh"><feDropShadow dx="1" dy="1" stdDeviation="1.5" flood-opacity="0.3"/></filter>
+            <marker id="arrowC" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#cba6f7"/></marker>
+        </defs>
+        <!-- 树结�?(复用�?的拓�? -->
+        <line x1="195" y1="20" x2="195" y2="75" stroke="#585b70" stroke-width="2"/>
+        <line x1="195" y1="75" x2="95" y2="145" stroke="#585b70" stroke-width="2"/>
+        <line x1="195" y1="75" x2="295" y2="145" stroke="#585b70" stroke-width="2"/>
+        <line x1="95" y1="145" x2="45" y2="220" stroke="#585b70" stroke-width="2"/>
+        <line x1="95" y1="145" x2="145" y2="220" stroke="#585b70" stroke-width="2"/>
+        <line x1="295" y1="145" x2="245" y2="220" stroke="#585b70" stroke-width="2"/>
+        <line x1="295" y1="145" x2="345" y2="220" stroke="#585b70" stroke-width="2"/>
+        <line x1="45" y1="220" x2="25" y2="290" stroke="#585b70" stroke-width="2"/>
+        <line x1="45" y1="220" x2="75" y2="290" stroke="#585b70" stroke-width="2"/>
+        <line x1="245" y1="220" x2="225" y2="290" stroke="#585b70" stroke-width="2"/>
+        <line x1="245" y1="220" x2="265" y2="290" stroke="#585b70" stroke-width="2"/>
+
+        <!-- 节点 -->
+        <circle cx="195" cy="20" r="16" fill="url(#gN)" filter="url(#sh)"/><text x="195" y="25" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">1</text>
+        <circle cx="195" cy="75" r="16" fill="url(#gN)" filter="url(#sh)"/><text x="195" y="80" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">2</text>
+        <circle cx="95" cy="145" r="16" fill="url(#gN)" filter="url(#sh)"/><text x="95" y="150" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">3</text>
+        <circle cx="295" cy="145" r="16" fill="url(#gL)" filter="url(#sh)"/><text x="295" y="150" text-anchor="middle" fill="#000" font-size="11" font-weight="bold">4</text>
+        <text x="295" y="167" text-anchor="middle" fill="#a6e3a1" font-size="10">LCA</text>
+        <circle cx="45" cy="220" r="15" fill="url(#gN)" filter="url(#sh)"/><text x="45" y="225" text-anchor="middle" fill="#fff" font-size="10">6</text>
+        <circle cx="145" cy="220" r="15" fill="url(#gN)" filter="url(#sh)"/><text x="145" y="225" text-anchor="middle" fill="#fff" font-size="10">7</text>
+        <circle cx="245" cy="220" r="15" fill="url(#gN)" filter="url(#sh)"/><text x="245" y="225" text-anchor="middle" fill="#fff" font-size="10">8</text>
+        <circle cx="345" cy="220" r="15" fill="url(#gN)" filter="url(#sh)"/><text x="345" y="225" text-anchor="middle" fill="#fff" font-size="10">9</text>
+        <circle cx="25" cy="290" r="14" fill="url(#gU2)" filter="url(#sh)"/><text x="25" y="294" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">10</text>
+        <circle cx="75" cy="290" r="14" fill="url(#gN)" filter="url(#sh)"/><text x="75" y="294" text-anchor="middle" fill="#fff" font-size="10">11</text>
+        <circle cx="225" cy="290" r="14" fill="url(#gV2)" filter="url(#sh)"/><text x="225" y="294" text-anchor="middle" fill="#000" font-size="10" font-weight="bold">12</text>
+        <circle cx="265" cy="290" r="14" fill="url(#gN)" filter="url(#sh)"/><text x="265" y="294" text-anchor="middle" fill="#fff" font-size="10">13</text>
+
+        <!-- === 右侧：步骤说�?=== -->
+        <text x="410" y="30" fill="#cdd6f4" font-size="14" font-weight="bold">查询 LCA(10, 12) 执行过程</text>
+        <line x1="410" y1="38" x2="650" y2="38" stroke="#45475a" stroke-width="1"/>
+
+        <!-- 初始状�?-->
+        <text x="410" y="62" fill="#a6e3a1" font-size="12" font-weight="bold">�?初始状�?/text>
+        <text x="410" y="82" fill="#cdd6f4" font-size="11">depth[10]=5, depth[12]=5</text>
+        <text x="410" y="100" fill="#a6adc8" font-size="11">深度相同，直接进入第②步</text>
+
+        <!-- 第②步：枚举 -->
+        <text x="410" y="130" fill="#a6e3a1" font-size="12" font-weight="bold">�?第②步：�?i=2 �?0 枚举</text>
+
+        <!-- i=2 -->
+        <rect x="410" y="142" width="230" height="42" rx="6" fill="#cba6f711"/>
+        <text x="420" y="160" fill="#cba6f7" font-size="12" font-weight="bold">i=2 (2²=4 �?:</text>
+        <text x="420" y="178" fill="#a6adc8" font-size="11">fa[10][2]=2, fa[12][2]=2 �?相等，不�?/text>
+
+        <!-- i=1 -->
+        <rect x="410" y="192" width="230" height="42" rx="6" fill="#f9e2af11"/>
+        <text x="420" y="210" fill="#f9e2af" font-size="12" font-weight="bold">i=1 (2¹=2 �?:</text>
+        <text x="420" y="228" fill="#a6adc8" font-size="11">fa[10][1]=3, fa[12][1]=4 �?不等 �?�?</text>
+
+        <!-- i=0 -->
+        <rect x="410" y="242" width="230" height="42" rx="6" fill="#f38ba811"/>
+        <text x="420" y="260" fill="#f38ba8" font-size="12" font-weight="bold">i=0 (2�?1 �?:</text>
+        <text x="420" y="278" fill="#a6adc8" font-size="11">fa[10'][0]=6, fa[12'][0]=8 �?不等 �?�?</text>
+
+        <!-- 结果 -->
+        <rect x="410" y="298" width="230" height="30" rx="6" fill="#a6e3a122"/>
+        <text x="420" y="318" fill="#a6e3a1" font-size="12" font-weight="bold">🏁 返回 fa[10''][0] = 4 �?/text>
+
+        <!-- 跳跃轨迹标注 -->
+        <text x="410" y="360" fill="#89b4fa" font-size="12" font-weight="bold">跳跃轨迹�?/text>
+        <text x="410" y="382" fill="#f38ba8" font-size="11">10(起始) �?�?步到3 �?�?步到6</text>
+        <text x="410" y="402" fill="#f9e2af" font-size="11">12(起始) �?�?步到4 �?�?步到8</text>
+        <text x="410" y="425" fill="#a6e3a1" font-size="11">3�?的父亲是2, 6�?的父亲不�? 等�?/text>
+        <text x="410" y="443" fill="#a6adc8" font-size="10">(这是示意，实际树结构以左侧为�?</text>
+
+        <!-- 图例 -->
+        <rect x="410" y="470" width="12" height="12" rx="3" fill="url(#gU2)"/>
+        <text x="428" y="481" fill="#cdd6f4" font-size="11">u (节点10)</text>
+        <rect x="520" y="470" width="12" height="12" rx="3" fill="url(#gV2)"/>
+        <text x="538" y="481" fill="#cdd6f4" font-size="11">v (节点12)</text>
+    </svg>
+    <p class="svg-caption">�?a：查�?LCA(10, 12) 的实际执行过程。两节点深度均为5，跳过第①步。枚�?i=2 时发�?fa 相等（都�?），不跳。i=1、i=0 �?fa 不等，执行跳跃。最终返�?fa[u][0]�?/p>
+
+    <p>更直观的跳跃演示�?/p>
+REPLACE
+    <svg viewBox="0 0 700 340" width="700" height="340" xmlns="http://www.w3.org/2000/svg">
+        <!-- 直线祖先链：方便展示跳跃 -->
+        <!-- �?-->
+        <circle cx="350" cy="310" r="18" fill="#a6e3a1"/>
+        <text x="350" y="316" text-anchor="middle" fill="#000" font-size="12" font-weight="bold">LCA</text>
+
+        <circle cx="350" cy="250" r="18" fill="#89b4fa" opacity="0.5"/>
+        <text x="350" y="256" text-anchor="middle" fill="#fff" font-size="11">A</text>
+
+        <circle cx="350" cy="190" r="18" fill="#89b4fa" opacity="0.6"/>
+        <text x="350" y="196" text-anchor="middle" fill="#fff" font-size="11">B</text>
+
+        <circle cx="350" cy="130" r="18" fill="#89b4fa" opacity="0.7"/>
+        <text x="350" y="136" text-anchor="middle" fill="#fff" font-size="11">C</text>
+
+        <circle cx="350" cy="70" r="18" fill="#89b4fa" opacity="0.8"/>
+        <text x="350" y="76" text-anchor="middle" fill="#fff" font-size="11">D</text>
+
+        <circle cx="350" cy="20" r="18" fill="#f38ba8"/>
+        <text x="350" y="26" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">u</text>
+
+        <!-- 连线 -->
+        <line x1="350" y1="38" x2="350" y2="52" stroke="#585b70" stroke-width="2"/>
+        <line x1="350" y1="88" x2="350" y2="112" stroke="#585b70" stroke-width="2"/>
+        <line x1="350" y1="148" x2="350" y2="172" stroke="#585b70" stroke-width="2"/>
+        <line x1="350" y1="208" x2="350" y2="232" stroke="#585b70" stroke-width="2"/>
+        <line x1="350" y1="268" x2="350" y2="292" stroke="#585b70" stroke-width="2"/>
+
+        <!-- 右侧标注跳跃 -->
+        <text x="385" y="56" fill="#cba6f7" font-size="12">尝试 i=2�?²=4 �?/text>
+        <path d="M368,55 Q390,55 385,55" fill="none" stroke="#cba6f7" stroke-width="1.5" marker-end="url(#arrJ)"/>
+        <text x="385" y="74" fill="#f38ba8" font-size="11">fa[u][2] = B</text>
+        <text x="385" y="92" fill="#6c7086" font-size="10">fa[v][2] �?fa[u][2]? �?检�?/text>
+
+        <text x="385" y="166" fill="#cba6f7" font-size="12">尝试 i=1�?¹=2 �?/text>
+        <text x="385" y="184" fill="#89b4fa" font-size="11">fa[u'][1] = A</text>
+        <text x="385" y="202" fill="#6c7086" font-size="10">fa[v'][1] �?fa[u'][1]? �?检�?/text>
+
+        <text x="385" y="240" fill="#cba6f7" font-size="12">尝试 i=0�?�?1 �?/text>
+        <text x="385" y="258" fill="#a6e3a1" font-size="11">fa[u''][0] = LCA �?/text>
+        <text x="385" y="276" fill="#6c7086" font-size="10">fa[v''][0] = fa[u''][0] �?不跳</text>
+
+        <!-- 最后结�?-->
+        <rect x="370" y="290" width="200" height="35" rx="8" fill="#a6e3a1" opacity="0.15"/>
+        <text x="470" y="313" text-anchor="middle" fill="#a6e3a1" font-size="13" font-weight="bold">返回 fa[u][0] = LCA</text>
+    </svg>
+    <p class="svg-caption">�?：第②步——两个节点一起向上跳跃。从较大步长到较小步长枚举，�?fa[u][i] �?fa[v][i] 时跳上去。最终停�?LCA 的下一层，返回 fa[u][0]�?/p>
+</div>
+
+<!-- ==================== 新增: 朴素 vs 倍增跳跃对比 ==================== -->
+<h2>补充：朴素跳�?vs 倍增跳跃</h2>
+<div class="card">
+    <p>下面这个对比图生动地展示了朴素法与倍增法在效率上的差异�?/p>
+    <svg viewBox="0 0 740 420" width="740" height="420" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <marker id="aRed" markerWidth="8" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L8,3.5 L0,7 Z" fill="#f38ba8"/></marker>
+            <marker id="aAccent" markerWidth="8" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L8,3.5 L0,7 Z" fill="#89b4fa"/></marker>
+            <filter id="sh2"><feDropShadow dx="1" dy="1" stdDeviation="1.5" flood-opacity="0.3"/></filter>
+        </defs>
+        <!-- ======== 左侧：朴素法 ======== -->
+        <rect x="10" y="10" width="340" height="400" rx="10" fill="none" stroke="#f38ba8" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="180" y="38" text-anchor="middle" fill="#f38ba8" font-size="14" font-weight="bold">�?朴素法：O(n) / �?/text>
+
+        <!-- �?-->
+        <circle cx="80" cy="355" r="15" fill="#f38ba8" filter="url(#sh2)"/><text x="80" y="361" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">u</text>
+        <circle cx="80" cy="310" r="14" fill="#89b4fa" opacity="0.5"/><text x="80" y="315" text-anchor="middle" fill="#fff" font-size="9">�?/text>
+        <circle cx="80" cy="265" r="14" fill="#89b4fa" opacity="0.55"/><text x="80" y="270" text-anchor="middle" fill="#fff" font-size="9">�?/text>
+        <circle cx="80" cy="220" r="14" fill="#89b4fa" opacity="0.6"/><text x="80" y="225" text-anchor="middle" fill="#fff" font-size="9">�?/text>
+        <circle cx="80" cy="175" r="14" fill="#89b4fa" opacity="0.65"/><text x="80" y="180" text-anchor="middle" fill="#fff" font-size="9">�?/text>
+        <circle cx="80" cy="130" r="14" fill="#89b4fa" opacity="0.7"/><text x="80" y="135" text-anchor="middle" fill="#fff" font-size="9">�?/text>
+        <circle cx="80" cy="85" r="14" fill="#89b4fa" opacity="0.75"/><text x="80" y="90" text-anchor="middle" fill="#fff" font-size="9">�?/text>
+        <circle cx="80" cy="50" r="15" fill="#a6e3a1" filter="url(#sh2)"/><text x="80" y="56" text-anchor="middle" fill="#000" font-size="10" font-weight="bold">�?/text>
+
+        <line x1="80" y1="340" x2="80" y2="324" stroke="#585b70" stroke-width="2"/>
+        <line x1="80" y1="296" x2="80" y2="279" stroke="#585b70" stroke-width="2"/>
+        <line x1="80" y1="251" x2="80" y2="234" stroke="#585b70" stroke-width="2"/>
+        <line x1="80" y1="206" x2="80" y2="189" stroke="#585b70" stroke-width="2"/>
+        <line x1="80" y1="161" x2="80" y2="144" stroke="#585b70" stroke-width="2"/>
+        <line x1="80" y1="116" x2="80" y2="99" stroke="#585b70" stroke-width="2"/>
+        <line x1="80" y1="71" x2="80" y2="65" stroke="#585b70" stroke-width="2"/>
+
+        <!-- 右侧标注 -->
+        <text x="120" y="340" fill="#f38ba8" font-size="10">�?一步一步爬�?/text>
+        <text x="120" y="310" fill="#a6adc8" font-size="10">step 1</text>
+        <text x="120" y="265" fill="#a6adc8" font-size="10">step 2</text>
+        <text x="120" y="220" fill="#a6adc8" font-size="10">step 3</text>
+        <text x="120" y="175" fill="#a6adc8" font-size="10">step 4</text>
+        <text x="120" y="130" fill="#a6adc8" font-size="10">step 5</text>
+        <text x="120" y="85" fill="#a6adc8" font-size="10">step 6</text>
+        <text x="120" y="50" fill="#a6e3a1" font-size="10">到达!</text>
+
+        <!-- 统计 -->
+        <rect x="140" y="370" width="140" height="30" rx="5" fill="#f38ba822"/>
+        <text x="210" y="390" text-anchor="middle" fill="#f38ba8" font-size="11" font-weight="bold">总共 7 �?(O(n))</text>
+
+        <!-- ======== 右侧：倍增�?======== -->
+        <rect x="370" y="10" width="360" height="400" rx="10" fill="none" stroke="#a6e3a1" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="550" y="38" text-anchor="middle" fill="#a6e3a1" font-size="14" font-weight="bold">�?倍增法：O(log n) / �?/text>
+
+        <!-- 链（相同结构�?-->
+        <circle cx="440" cy="355" r="15" fill="#f38ba8" filter="url(#sh2)"/><text x="440" y="361" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">u</text>
+        <circle cx="440" cy="310" r="14" fill="#89b4fa" opacity="0.5"/><text x="440" y="315" text-anchor="middle" fill="#fff" font-size="9">�?/text>
+        <circle cx="440" cy="265" r="14" fill="#89b4fa" opacity="0.55"/><text x="440" y="270" text-anchor="middle" fill="#fff" font-size="9">�?/text>
+        <circle cx="440" cy="220" r="14" fill="#89b4fa" opacity="0.6"/><text x="440" y="225" text-anchor="middle" fill="#fff" font-size="9">�?/text>
+        <circle cx="440" cy="175" r="14" fill="#89b4fa" opacity="0.65"/><text x="440" y="180" text-anchor="middle" fill="#fff" font-size="9">�?/text>
+        <circle cx="440" cy="130" r="14" fill="#89b4fa" opacity="0.7"/><text x="440" y="135" text-anchor="middle" fill="#fff" font-size="9">�?/text>
+        <circle cx="440" cy="85" r="14" fill="#89b4fa" opacity="0.75"/><text x="440" y="90" text-anchor="middle" fill="#fff" font-size="9">�?/text>
+        <circle cx="440" cy="50" r="15" fill="#a6e3a1" filter="url(#sh2)"/><text x="440" y="56" text-anchor="middle" fill="#000" font-size="10" font-weight="bold">�?/text>
+
+        <line x1="440" y1="340" x2="440" y2="324" stroke="#585b70" stroke-width="2"/>
+        <line x1="440" y1="296" x2="440" y2="279" stroke="#585b70" stroke-width="2"/>
+        <line x1="440" y1="251" x2="440" y2="234" stroke="#585b70" stroke-width="2"/>
+        <line x1="440" y1="206" x2="440" y2="189" stroke="#585b70" stroke-width="2"/>
+        <line x1="440" y1="161" x2="440" y2="144" stroke="#585b70" stroke-width="2"/>
+        <line x1="440" y1="116" x2="440" y2="99" stroke="#585b70" stroke-width="2"/>
+        <line x1="440" y1="71" x2="440" y2="65" stroke="#585b70" stroke-width="2"/>
+
+        <!-- 跳跃标注（大跳） -->
+        <!-- i=2: �?�?-->
+        <path d="M455,350 Q520,320 455,230" fill="none" stroke="#cba6f7" stroke-width="2.5" marker-end="url(#aRed)" stroke-dasharray="6,3"/>
+        <text x="500" y="295" fill="#cba6f7" font-size="11" font-weight="bold">i=2: �?�?/text>
+        <!-- i=1: �?�?-->
+        <path d="M455,225 Q530,195 455,135" fill="none" stroke="#f9e2af" stroke-width="2.5" marker-end="url(#aRed)" stroke-dasharray="6,3"/>
+        <text x="505" y="185" fill="#f9e2af" font-size="11" font-weight="bold">i=1: �?�?/text>
+        <!-- i=0: �?�?(到根) -->
+        <path d="M455,80 Q520,60 455,52" fill="none" stroke="#a6e3a1" stroke-width="2" marker-end="url(#aRed)"/>
+        <text x="505" y="72" fill="#a6e3a1" font-size="10">i=0</text>
+
+        <!-- 统计 -->
+        <rect x="485" y="370" width="140" height="30" rx="5" fill="#a6e3a122"/>
+        <text x="555" y="390" text-anchor="middle" fill="#a6e3a1" font-size="11" font-weight="bold">总共 3 �?(O(log n))</text>
+    </svg>
+    <p class="svg-caption">�?c：朴素法 vs 倍增法对比。在同一条链上爬 7 步：朴素法需要一步一步爬，倍增法用二进制分解（7=4+2+1）只需 3 次跳跃�?/p>
+</div>
+
+<!-- ==================== 五、完整代�?==================== -->
+<h2>五、完整代码实�?/h2>
+<div class="card">
+    <div class="code-block">
+<span style="color:#6c7086">// ====== 树上倍增�?LCA ======</span>
+<span style="color:#cba6f7">const int</span> MAXN = <span style="color:#a6e3a1">100005</span>;
+<span style="color:#cba6f7">const int</span> LOG  = <span style="color:#a6e3a1">20</span>;  <span style="color:#6c7086">// 2^20 �?1e6，足够大</span>
+
+vector<<span style="color:#cba6f7">int</span>> g[MAXN];
+<span style="color:#cba6f7">int</span> depth[MAXN];
+<span style="color:#cba6f7">int</span> fa[MAXN][LOG + <span style="color:#a6e3a1">1</span>];
+
+<span style="color:#cba6f7">void</span> <span style="color:#89b4fa">dfs</span>(<span style="color:#cba6f7">int</span> u, <span style="color:#cba6f7">int</span> p) {
+    fa[u][<span style="color:#a6e3a1">0</span>] = p;
+    depth[u] = depth[p] + <span style="color:#a6e3a1">1</span>;
+    <span style="color:#cba6f7">for</span> (<span style="color:#cba6f7">int</span> i = <span style="color:#a6e3a1">1</span>; i <= LOG; i++)
+        fa[u][i] = fa[fa[u][i-<span style="color:#a6e3a1">1</span>]][i-<span style="color:#a6e3a1">1</span>];
+    <span style="color:#cba6f7">for</span> (<span style="color:#cba6f7">int</span> v : g[u])
+        <span style="color:#cba6f7">if</span> (v != p) dfs(v, u);
+}
+
+<span style="color:#cba6f7">int</span> <span style="color:#89b4fa">lca</span>(<span style="color:#cba6f7">int</span> u, <span style="color:#cba6f7">int</span> v) {
+    <span style="color:#cba6f7">if</span> (depth[u] < depth[v]) swap(u, v);
+    <span style="color:#6c7086">// 第①步：提到同一深度</span>
+    <span style="color:#cba6f7">int</span> diff = depth[u] - depth[v];
+    <span style="color:#cba6f7">for</span> (<span style="color:#cba6f7">int</span> i = LOG; i >= <span style="color:#a6e3a1">0</span>; i--)
+        <span style="color:#cba6f7">if</span> (diff & (<span style="color:#a6e3a1">1</span> << i))
+            u = fa[u][i];
+    <span style="color:#cba6f7">if</span> (u == v) <span style="color:#cba6f7">return</span> u;
+    <span style="color:#6c7086">// 第②步：一起跳</span>
+    <span style="color:#cba6f7">for</span> (<span style="color:#cba6f7">int</span> i = LOG; i >= <span style="color:#a6e3a1">0</span>; i--)
+        <span style="color:#cba6f7">if</span> (fa[u][i] != fa[v][i]) {
+            u = fa[u][i];
+            v = fa[v][i];
+        }
+    <span style="color:#cba6f7">return</span> fa[u][<span style="color:#a6e3a1">0</span>];
+}</div>
+</div>
+
+<!-- ==================== 六、fa 表示�?==================== -->
+<h2>六、倍增表可视化</h2>
+<div class="card">
+    <p>以图1的树为例，从根节�?1 DFS 后得到的 <span class="inline-code">fa[u][i]</span> 表（部分）：</p>
+    <div class="table-wrap">
+    <table>
+        <tr>
+            <th>节点 u</th>
+            <th>fa[u][0]（父�?/th>
+            <th>fa[u][1]�?¹�?/th>
+            <th>fa[u][2]�?²�?/th>
+            <th>depth</th>
+        </tr>
+        <tr><td>1（根�?/td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+        <tr><td>2</td><td>1</td><td>0</td><td>0</td><td>2</td></tr>
+        <tr><td>3</td><td>2</td><td>1</td><td>0</td><td>3</td></tr>
+        <tr><td>4</td><td>2</td><td>1</td><td>0</td><td>3</td></tr>
+        <tr><td>6</td><td>3</td><td>2</td><td>1</td><td>4</td></tr>
+        <tr><td>7</td><td>3</td><td>2</td><td>1</td><td>4</td></tr>
+        <tr><td>10</td><td>6</td><td>3</td><td>2</td><td>5</td></tr>
+        <tr><td>12</td><td>8</td><td>4</td><td>2</td><td>5</td></tr>
+    </table>
+    </div>
+    <p style="margin-top:10px;"><span class="tag tag-blue">说明</span> 表中 <span class="inline-code">0</span> 表示越过了根节点（不存在），一般在实现中用一个虚拟节�?0 占位。查 LCA �?<span class="inline-code">fa[x][i] == 0</span> 已越过根，不会被视为正常祖先�?/p>
+</div>
+
+<!-- ==================== 补充: fa 表逐层构建过程 ==================== -->
+<h2>补充：fa 表构建过程详�?/h2>
+<div class="card">
+    <p>�?DFS 顺序逐层递推填充 fa 表的过程�?/p>
+    <svg viewBox="0 0 760 520" width="760" height="520" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <marker id="aFill" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,7 Z" fill="#89b4fa"/></marker>
+            <filter id="sh3"><feDropShadow dx="1" dy="1" stdDeviation="1.5" flood-opacity="0.3"/></filter>
+        </defs>
+        <!-- 标题 -->
+        <text x="380" y="24" text-anchor="middle" fill="#cdd6f4" font-size="13" font-weight="bold">fa 表的递推构建 (以节�?为例)</text>
+
+        <!-- ===== �?�?(�? ===== -->
+        <text x="20" y="55" fill="#cba6f7" font-size="12" font-weight="bold">�?0 层：DFS 得到直接父亲</text>
+        <!-- �? 6 �?3 �?2 �?1 -->
+        <circle cx="100" cy="100" r="16" fill="#a6e3a1" filter="url(#sh3)"/><text x="100" y="106" text-anchor="middle" fill="#000" font-size="11" font-weight="bold">6</text>
+        <circle cx="220" cy="100" r="16" fill="#89b4fa" filter="url(#sh3)"/><text x="220" y="106" text-anchor="middle" fill="#fff" font-size="11">3</text>
+        <circle cx="340" cy="100" r="16" fill="#89b4fa" opacity="0.7" filter="url(#sh3)"/><text x="340" y="106" text-anchor="middle" fill="#fff" font-size="10">2</text>
+        <circle cx="460" cy="100" r="16" fill="#89b4fa" opacity="0.5" filter="url(#sh3)"/><text x="460" y="106" text-anchor="middle" fill="#fff" font-size="10">1</text>
+        <line x1="116" y1="100" x2="204" y2="100" stroke="#585b70" stroke-width="2.5"/>
+        <line x1="236" y1="100" x2="324" y2="100" stroke="#585b70" stroke-width="2.5"/>
+        <line x1="356" y1="100" x2="444" y2="100" stroke="#585b70" stroke-width="2.5"/>
+        <text x="160" y="90" fill="#f9e2af" font-size="10" text-anchor="middle">fa[6][0]=3</text>
+        <text x="280" y="90" fill="#f9e2af" font-size="10" text-anchor="middle">fa[3][0]=2</text>
+        <text x="400" y="90" fill="#f9e2af" font-size="10" text-anchor="middle">fa[2][0]=1</text>
+
+        <!-- 右箭�?-->
+        <text x="540" y="105" fill="#cba6f7" font-size="26">�?/text>
+
+        <!-- ===== �?�?===== -->
+        <text x="20" y="165" fill="#cba6f7" font-size="12" font-weight="bold">�?1 层：fa[6][1] = fa[fa[6][0]][0] = fa[3][0] = 2</text>
+        <circle cx="100" cy="210" r="16" fill="#a6e3a1" filter="url(#sh3)"/><text x="100" y="216" text-anchor="middle" fill="#000" font-size="11" font-weight="bold">6</text>
+        <!-- �?�?�?2 -->
+        <path d="M116,210 Q280,170 340,210" fill="none" stroke="#cba6f7" stroke-width="3" marker-end="url(#aFill)" stroke-dasharray="8,4"/>
+        <text x="230" y="185" fill="#cba6f7" font-size="11" font-weight="bold" text-anchor="middle">2¹ = 2 �?/text>
+
+        <circle cx="340" cy="210" r="16" fill="#f9e2af" filter="url(#sh3)"/><text x="340" y="216" text-anchor="middle" fill="#000" font-size="11" font-weight="bold">2</text>
+        <text x="340" y="236" fill="#cba6f7" font-size="10" text-anchor="middle">fa[6][1]=2</text>
+
+        <text x="540" y="215" fill="#cba6f7" font-size="26">�?/text>
+
+        <!-- ===== �?�?===== -->
+        <text x="20" y="285" fill="#cba6f7" font-size="12" font-weight="bold">�?2 层：fa[6][2] = fa[fa[6][1]][1] = fa[2][1] = fa[fa[2][0]][0] = 1</text>
+        <circle cx="100" cy="330" r="16" fill="#a6e3a1" filter="url(#sh3)"/><text x="100" y="336" text-anchor="middle" fill="#000" font-size="11" font-weight="bold">6</text>
+        <!-- �?�?�?1 -->
+        <path d="M116,330 Q280,290 460,330" fill="none" stroke="#f38ba8" stroke-width="3" marker-end="url(#aFill)" stroke-dasharray="8,4"/>
+        <text x="290" y="302" fill="#f38ba8" font-size="11" font-weight="bold" text-anchor="middle">2² = 4 �?/text>
+
+        <circle cx="460" cy="330" r="16" fill="#f9e2af" filter="url(#sh3)"/><text x="460" y="336" text-anchor="middle" fill="#000" font-size="11" font-weight="bold">1</text>
+        <text x="460" y="356" fill="#f38ba8" font-size="10" text-anchor="middle">fa[6][2]=1</text>
+
+        <!-- ===== 底部公式总结 ===== -->
+        <rect x="20" y="400" width="720" height="44" rx="10" fill="#181825" stroke="#45475a" stroke-width="1"/>
+        <text x="380" y="420" text-anchor="middle" fill="#cba6f7" font-size="13" font-family="monospace">fa[u][i] = fa[ fa[u][i-1] ][ i-1 ]</text>
+        <text x="380" y="440" text-anchor="middle" fill="#a6adc8" font-size="11">通用递推公式：跳 2�?�?= 先跳 2ⁱ⁻¹ 步，再从该处�?2ⁱ⁻¹ �?/text>
+
+        <!-- 底部示例表预�?-->
+        <rect x="60" y="460" width="640" height="50" rx="8" fill="#282840"/>
+        <text x="80" y="480" fill="#89b4fa" font-size="11" font-family="monospace">i=0: fa[6][0]=3</text>
+        <text x="250" y="480" fill="#89b4fa" font-size="11" font-family="monospace">i=1: fa[6][1]=2</text>
+        <text x="420" y="480" fill="#89b4fa" font-size="11" font-family="monospace">i=2: fa[6][2]=1</text>
+        <text x="590" y="480" fill="#a6adc8" font-size="11" font-family="monospace">i�?: 0 (越界)</text>
+    </svg>
+    <p class="svg-caption">�?：以节点6为例，fa 表逐层构建。i=0 直接来自 DFS 的父亲；i=1 是从父亲再跳 2�?步；i=2 是从 fa[6][1] 再跳 2¹ 步。每层利用上一层的结果，O(log n) 填充所�?i�?/p>
+</div>
+
+<!-- ==================== 七、复杂度分析 ==================== -->
+<h2>七、复杂度分析</h2>
+<div class="card">
+    <table>
+        <tr>
+            <th>操作</th>
+            <th>时间复杂�?/th>
+            <th>说明</th>
+        </tr>
+        <tr>
+            <td>预处�?/td>
+            <td><span class="highlight">O(n log n)</span></td>
+            <td>每个节点计算 log n 个倍增�?/td>
+        </tr>
+        <tr>
+            <td>单次查询</td>
+            <td><span class="highlight">O(log n)</span></td>
+            <td>对齐深度 + 一起跳，各最�?log n �?/td>
+        </tr>
+        <tr>
+            <td>空间</td>
+            <td><span class="highlight">O(n log n)</span></td>
+            <td>fa 数组大小�?n × (log n + 1)</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ==================== 八、关键细节与常见问题 ==================== -->
+<h2>八、关键细节与常见�?/h2>
+<div class="card">
+    <ol>
+        <li><span class="em-red">根节点的父亲</span>：通常�?<span class="inline-code">fa[root][0] = 0</span>（或 <span class="inline-code">root</span> 自身）。在跳的过程中，如果 <span class="inline-code">fa[u][i] == 0</span>，则已经越过根，不应再跳�?/li>
+        <li><span class="em-red">深度差用位运�?/span>�?span class="inline-code">if (diff & (1 << i))</span> 是经典写法，等价于判�?<span class="inline-code">diff</span> 的第 <span class="inline-code">i</span> 位是否为 1�?/li>
+        <li><span class="em-yellow">第②步的循环方向</span>�?strong>必须从大到小<i class="inline-code">i = LOG �?0</i></strong>。如果从小到大，会遗漏一些公共祖先（相当于跳过了）�?/li>
+        <li><span class="em-yellow">终止条件</span>：第②步循环结束后，<span class="inline-code">u</span> �?<span class="inline-code">v</span> 停在 LCA �?strong>直接儿子</strong>位置，故最终返�?<span class="inline-code">fa[u][0]</span>（或 <span class="inline-code">fa[v][0]</span>）�?/li>
+        <li><span class="tag tag-green">特判</span>：第①步结束后若 <span class="inline-code">u == v</span>，说�?<span class="inline-code">v</span> 本来就是 <span class="inline-code">u</span> 的祖先，直接返回�?/li>
+    </ol>
+</div>
+
+<!-- ==================== 九、应用场�?==================== -->
+<h2>九、典型应用场�?/h2>
+<div class="card">
+    <ul>
+        <li>🌲 <strong>树上两点距离</strong>�?span class="inline-code">dist(u, v) = depth[u] + depth[v] - 2 × depth[lca(u, v)]</span></li>
+        <li>🌲 <strong>树上路径是否经过某条�?/strong></li>
+        <li>🌲 <strong>树上差分</strong>：点差分 / 边差分时定位 LCA</li>
+        <li>🌲 <strong>K 级祖先查�?/strong>：直接复�?fa �?/li>
+        <li>🌲 <strong>树链剖分辅助</strong>：在某些问题中联合使�?/li>
+    </ul>
+</div>
+
+<!-- ==================== 十、总结对比 ==================== -->
+<h2>十、总结与对�?/h2>
+<div class="card">
+    <p>LCA 有多种求法，倍增法是其中 <span class="highlight">最适合竞赛初学�?/span> 的：</p>
+    <div class="table-wrap">
+    <table>
+        <tr>
+            <th>方法</th>
+            <th>预处�?/th>
+            <th>查询</th>
+            <th>特点</th>
+        </tr>
+        <tr>
+            <td>朴素上跳</td>
+            <td><span class="em-green">O(1)</span></td>
+            <td><span class="em-red">O(n)</span></td>
+            <td>太慢</td>
+        </tr>
+        <tr>
+            <td><strong>倍增�?/strong></td>
+            <td><span class="em-yellow">O(n log n)</span></td>
+            <td><span class="em-green">O(log n)</span></td>
+            <td>�?最常用</td>
+        </tr>
+        <tr>
+            <td>Tarjan 离线</td>
+            <td>�?/td>
+            <td><span class="em-green">O(n + Q)</span> 均摊</td>
+            <td>离线，需一次性给出所有询�?/td>
+        </tr>
+        <tr>
+            <td>RMQ(Euler Tour)</td>
+            <td><span class="em-yellow">O(n log n)</span></td>
+            <td><span class="em-green">O(1)</span></td>
+            <td>ST表，常数更小</td>
+        </tr>
+        <tr>
+            <td>树剖</td>
+            <td><span class="em-green">O(n)</span></td>
+            <td><span class="em-green">O(log n)</span></td>
+            <td>常数小，通用性强</td>
+        </tr>
+    </table>
+    </div>
+    <p style="margin-top:14px;">
+        <span class="tag tag-green">推荐</span> 倍增法上手容易、理解直观，是绝大多数树相关竞赛题的默认选择。掌握它后，再学 Tarjan / RMQ / 树剖会更轻松�?
+    </p>
+</div>
+
+<div class="footnote">
+    📝 树上倍增�?LCA 笔记 · 2026-05-01 · �?SVG 插图
+</div>
+
+</body>
+</html>

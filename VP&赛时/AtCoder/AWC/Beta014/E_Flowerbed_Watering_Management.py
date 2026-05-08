@@ -26,30 +26,31 @@ class SegmentTree:
     def __init__(self, arr):
         self.n = len(arr)
         self.tr = [0] * 4 * self.n
-        self.lazy = [0] * 4 * self.n
+        self.add = [0] * 4 * self.n
         self.arr = arr
         self._build(1, 0, self.n-1)
 
     def _pushup(self, p):
         self.tr[p] = self.tr[p << 1] + self.tr[p << 1 | 1]
     
+    def lazy(self, p, tag, length):
+        self.tr[p] += tag * length
+        self.add[p] += tag
+
     def _pushdown(self, p, l, r):
-        if self.lazy[p] != 0:
+        if self.add[p] != 0:
             m = (l + r) >> 1
-            tag = self.lazy[p]
+            tag = self.add[p]
 
-            self.tr[p << 1] += tag * (m - l + 1) 
-            self.lazy[p << 1] += tag
+            # 下发懒标记
+            self.lazy(p << 1, tag, m - l + 1)
+            self.lazy(p << 1 | 1, tag, r - m)
 
-            self.tr[p << 1 | 1] += tag * (r - m ) 
-            self.lazy[p << 1 | 1] += tag
-
-            self.lazy[p] = 0
+            self.add[p] = 0
             
     def _update(self, p, l, r, ql, qr, val):
         if ql <= l and r <= qr:
-            self.tr[p] += val * (r - l + 1)
-            self.lazy[p] += val
+            self.lazy(p, val, r - l + 1)
             return 
         
         self._pushdown(p, l, r)
@@ -69,16 +70,16 @@ class SegmentTree:
         m = (l + r) >> 1
         self._build(p << 1, l, m)
         self._build(p << 1 | 1, m + 1, r)
+
         self._pushup(p)
     
     def _query(self, p, l, r, ql, qr):
         if ql <= l and r <= qr:
             return self.tr[p]
         
-        #* 懒标记更新
         self._pushdown(p, l, r)
-        res = 0
 
+        res = 0
         m = (l + r) >> 1
         if ql <= m:
             res += self._query(p << 1, l, m, ql, qr)

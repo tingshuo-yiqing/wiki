@@ -1,53 +1,86 @@
-[CF1006E - CodeForces](https://codeforces.com/contest/1006/problem/E) 
-
-**题意**：给定一颗有根树，根节点没有上级，其它节点是其子树的上级。要求在有顺序的 DFS 遍历下，进行 $q$ 个 $(u_i,k_i)$ 查询。意思为第 $u_i$ 个节点的 $k_i$ 的下属是什么。
-
-<div align="center">
-    <img src="https://img2024.cnblogs.com/blog/3769106/202603/3769106-20260302102923649-2038376110.png" style="width: 80%; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-    <div style="color: #999; padding: 10px; font-size: 14px;">这里的接收顺序是DFS序</div>
-</div>
-
-是 DFS 序的裸题。不过数据量比较大可能需要使用 Python3 进行提交，不然可能会 MLE 或 RE。
-
-如果一定要使用 Pypy3 的话，请使用栈模拟的递归。
 
 
+DFS序有两种：
 
-综上，这道题就可以当作模版题练习
+* 入栈序：只记录节点第一次被访问的时间戳。
+* 欧拉序：进出各计一次。
+
+入栈序是最常用的，其核心性质是：**节点的子树在入栈序中是连续的一段**。所以子树的维护问题可以转化为区间维护。
+
+设置一下变量：
+
+* 子树大小：`sz`
+* 第一次被访问的时间戳：`tin`
+* 离开的时间戳：`tout`
+* 先序序列：`seq`
+
+### 递归求DFS序的模版
 
 ```python
-def main():
-    n, q = MII()
-    pa = LII()  #! 给出的节点是有序的
+timer = 0
+sz = [0] * (n + 1)
+tin = [0] * (n + 1)
+tout = [0] * (n + 1)
+seq = []
 
-    g = [[] for _ in range(n + 1)]
+def dfs(u, fa=-1):
+    nonlocal timer
+    timer += 1
+    tin[u] = timer
+    seq.append(u)
 
-    for v, u in enumerate(pa, start=2):
-        g[u].append(v)
-
-    sz = [0] * (n + 1)
-    tin = [0] * (n + 1)
-    seq = []
-
-    def dfs(u):
-        tin[u] = len(seq)
-        seq.append(u)
-
-        sz[u] = 1
-        for v in g[u]:  #! 这里子节点已经是有序的了
-            dfs(v)
+    sz[u] = 1
+    for v in g[u]:
+        if v != fa:
+            dfs(v, u)
             sz[u] += sz[v]
-    dfs(1)
+    tout[u] = timer 
 
-    outs = []
-    for _ in range(q):
-        u, k = MII()
+dfs(1)
+```
 
-        if k > sz[u]:
-            outs.append('-1')
-        else:
-            outs.append(str(seq[tin[u] + k - 1]))
+### 迭代求DFS序的模版
 
-    print(*outs, sep='\n')
+```python
+timer = 0
+tin = [0] * (n + 1)
+tout = [0] * (n + 1)
+seq = []
+
+st = [(-1, k, 0)]
+while st:
+    fa, u, state = st.pop()
+    if state == 0:
+        timer += 1
+        tin[u] = timer
+        seq.append(u)
+        st.append((fa, u, 1))
+        for v in g[u][::-1]:
+            if v != fa:
+                st.append((u, v, 0))
+    else:
+        tout[u] = timer
+```
+
+### 性质
+
+1. **前序DFS序具有子树连续性**：节点 `u` （包括 `u` ）在先序中的一段连续的序列为 `[tin[u], tout[u]]` 在先序序列 `seq` 中也可以表示为 `seq[tin[u], tin[u] + sz[u] - 1]` 。
+
+
+
+### 应用
+
+#### 子树修改与查询
+
+配合树状数组与线段树。通常将**带权树的权值映射到前序序列**。
+
+```python
+# w 为权值数组
+
+bit = BIT(n)
+for i, x in enumerate([tin[node - 1] for node in seq], start=1):
+    bit.add(i, x)
+ 
+seg = SegmentTree([tin[node - 1] for node in seq])
 ```
 

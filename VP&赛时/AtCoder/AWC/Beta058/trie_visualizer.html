@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>字典树 Trie 可视化 - P_8306</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Consolas', 'Courier New', 'Microsoft YaHei', monospace;
+    background: #1e1e2e;
+    color: #cdd6f4;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.header {
+    background: #181825;
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid #313244;
+    flex-shrink: 0;
+}
+.header h1 {
+    font-size: 16px;
+    color: #cba6f7;
+    white-space: nowrap;
+}
+.header .subtitle {
+    font-size: 11px;
+    color: #6c7086;
+}
+.main-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+/* 左侧面板 */
+.left-panel {
+    width: 520px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #313244;
+    background: #181825;
+    overflow: hidden;
+}
+.section-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #a6e3a1;
+    padding: 8px 12px;
+    background: #1e1e2e;
+    border-bottom: 1px solid #313244;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.section-title .dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot-build { background: #f9e2af; }
+.dot-query { background: #89b4fa; }
+.data-panel {
+    padding: 10px 12px;
+    background: #1e1e2e;
+    border-bottom: 1px solid #313244;
+    flex-shrink: 0;
+}
+.data-panel label {
+    font-size: 11px;
+    color: #bac2de;
+    display: block;
+    margin-bottom: 2px;
+}
+.data-panel input {
+    width: 100%;
+    background: #313244;
+    border: 1px solid #45475a;
+    color: #cdd6f4;
+    padding: 5px 8px;
+    font-size: 12px;
+    font-family: inherit;
+    border-radius: 4px;
+    outline: none;
+    margin-bottom: 6px;
+}
+.data-panel input:focus {
+    border-color: #cba6f7;
+    box-shadow: 0 0 0 1px rgba(203,166,247,0.3);
+}
+.row-2 {
+    display: flex;
+    gap: 8px;
+}
+.row-2 > div { flex: 1; }
+.control-buttons {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+.btn {
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid #45475a;
+    cursor: pointer;
+    color: #cdd6f4;
+    background: #313244;
+    font-family: inherit;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+.btn:hover {
+    background: #45475a;
+    border-color: #6c7086;
+}
+.btn-accent {
+    background: #cba6f7;
+    color: #1e1e2e;
+    border-color: #cba6f7;
+    font-weight: bold;
+}
+.btn-accent:hover {
+    background: #b4befe;
+    border-color: #b4befe;
+}
+.btn-green {
+    background: #a6e3a1;
+    color: #1e1e2e;
+    border-color: #a6e3a1;
+    font-weight: bold;
+}
+.btn-green:hover {
+    background: #94e2d5;
+    border-color: #94e2d5;
+}
+.btn-blue {
+    background: #89b4fa;
+    color: #1e1e2e;
+    border-color: #89b4fa;
+    font-weight: bold;
+}
+.btn-blue:hover {
+    background: #74c7ec;
+    border-color: #74c7ec;
+}
+/* 步骤信息 */
+.step-info {
+    padding: 8px 12px;
+    font-size: 12px;
+    background: #1e1e2e;
+    border-bottom: 1px solid #313244;
+    min-height: 28px;
+    color: #f5c2e7;
+    line-height: 1.5;
+    flex-shrink: 0;
+}
+.step-info .highlight-char {
+    color: #f9e2af;
+    font-weight: bold;
+    font-size: 14px;
+    background: #45475a;
+    padding: 1px 4px;
+    border-radius: 2px;
+}
+/* 代码区 */
+.code-panel {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+    background: #181825;
+}
+.code-panel pre {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.7;
+    padding: 0 0;
+}
+.code-line {
+    padding: 1px 16px;
+    white-space: pre;
+    color: #6c7086;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+}
+.code-line.active {
+    background: rgba(203,166,247,0.1);
+    color: #cdd6f4;
+    border-left-color: #cba6f7;
+}
+.code-line.dim { opacity: 0.4; }
+.code-keyword { color: #cba6f7; }
+.code-func { color: #89b4fa; }
+.code-str { color: #a6e3a1; }
+.code-num { color: #fab387; }
+.code-comment { color: #585b70; font-style: italic; }
+
+/* 右侧可视化 */
+.right-panel {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #11111b;
+}
+#svgCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+/* 图例 */
+.legend {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(24,24,37,0.92);
+    border: 1px solid #313244;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.legend-circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid;
+}
+/* 响应式 */
+@media (max-width: 1000px) {
+    .main-container { flex-direction: column; }
+    .left-panel { width: 100%; max-height: 50vh; flex-shrink: 0; }
+    .right-panel { height: 50vh; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🌳 字典树 Trie · 可视化</h1>
+    <span class="subtitle">P_8306 模板 · 数组+字典实现</span>
+</div>
+
+<div class="main-container">
+    <!-- 左侧面板 -->
+    <div class="left-panel">
+        <div class="section-title"><span class="dot dot-build"></span> 输入数据</div>
+        <div class="data-panel">
+            <label>模式串（空格分隔）</label>
+            <input id="patternsInput" type="text" value="abc ab abd ac" placeholder="例: abc ab abd ac">
+            <label>查询串（空格分隔）</label>
+            <input id="queriesInput" type="text" value="ab ac x" placeholder="例: ab ac x">
+            <div class="control-buttons">
+                <button class="btn btn-accent" onclick="buildAndShow()">🔄 重置 & 构建</button>
+                <button class="btn btn-green" onclick="stepInsert()">▶ 逐步插入</button>
+                <button class="btn btn-blue" onclick="stepQuery()">🔍 逐步查询</button>
+                <button class="btn" onclick="resetAll()">↺ 重置</button>
+                <button class="btn" onclick="showFullTree()">🌲 显示完整树</button>
+            </div>
+        </div>
+        <div class="step-info" id="stepInfo">点击「重置 & 构建」开始可视化…</div>
+        <div class="code-panel" id="codePanel">
+            <!-- 动态填充 -->
+        </div>
+    </div>
+
+    <!-- 右侧可视化 -->
+    <div class="right-panel" id="rightPanel">
+        <svg id="svgCanvas"></svg>
+        <div class="legend">
+            <div class="legend-item"><span class="legend-circle" style="background:#cba6f7;border-color:#b4befe;"></span> 当前节点</div>
+            <div class="legend-item"><span class="legend-circle" style="background:rgba(249,226,175,0.3);border-color:#f9e2af;"></span> 经过路径</div>
+            <div class="legend-item"><span class="legend-circle" style="background:#313244;border-color:#6c7086;"></span> 未激活</div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ========== Trie 引擎 ==========
+let trie, cnts;
+let buildIndex = 0;
+let queryIndex = 0;
+let patterns = [], queries = [];
+let stepMode = ''; // 'build' | 'query'
+
+function parseInput() {
+    patterns = document.getElementById('patternsInput').value.trim().split(/\s+/).filter(s => s);
+    queries = document.getElementById('queriesInput').value.trim().split(/\s+/).filter(s => s);
+}
+
+function initTrie() {
+    trie = [{}];
+    cnts = [0];
+}
+
+// 插入一个串，返回路径节点序列
+function insertOne(s) {
+    const path = [0];
+    let cur = 0;
+    for (const c of s) {
+        let nxt = trie[cur][c];
+        if (nxt === undefined) {
+            nxt = trie.length;
+            trie[cur][c] = nxt;
+            trie.push({});
+            cnts.push(0);
+        }
+        cur = nxt;
+        cnts[cur] += 1;
+        path.push(cur);
+    }
+    return path; // [nodeIdx0, nodeIdx1, ...]
+}
+
+// 查询一个串，返回 { found: bool, path: [...], value: number }
+function queryOne(t) {
+    const path = [0];
+    let cur = 0;
+    for (const c of t) {
+        const nxt = trie[cur][c];
+        if (nxt === undefined) {
+            return { found: false, path, breakChar: c };
+        }
+        cur = nxt;
+        path.push(cur);
+    }
+    return { found: true, path, value: cnts[cur] };
+}
+
+// ========== 树布局 ==========
+// 收集所有节点和边
+function collectTree() {
+    const nodes = []; // { id, cnt, children: [{char, childId}] }
+    const visited = new Set();
+    const stack = [0];
+    while (stack.length) {
+        const id = stack.pop();
+        if (visited.has(id)) continue;
+        visited.add(id);
+        const children = Object.entries(trie[id] || {}).map(([ch, cid]) => {
+            if (!visited.has(cid)) stack.push(cid);
+            return { char: ch, childId: cid };
+        });
+        nodes[id] = { id, cnt: cnts[id] || 0, children };
+    }
+    return nodes;
+}
+
+// 计算布局位置 (层次遍历)
+function layoutTree(nodes) {
+    const levels = []; // levels[depth] = [nodeId, ...]
+    const depth = {};
+    const parent = {};
+    const incomingChar = {}; // incomingChar[nodeId] = char
+    
+    const stack = [[0, 0]]; // [nodeId, d]
+    const visited = new Set();
+    while (stack.length) {
+        const [id, d] = stack.pop();
+        if (visited.has(id)) continue;
+        visited.add(id);
+        depth[id] = d;
+        if (!levels[d]) levels[d] = [];
+        levels[d].push(id);
+        
+        const children = (nodes[id] && nodes[id].children) ? nodes[id].children : [];
+        children.sort((a, b) => a.char.localeCompare(b.char));
+        for (const { char, childId } of children) {
+            if (!visited.has(childId)) {
+                stack.push([childId, d + 1]);
+                parent[childId] = id;
+                incomingChar[childId] = char;
+            }
+        }
+    }
+    
+    // 分配 x 坐标：每层均匀分布
+    const pos = {};
+    const V_SPACING = 60;
+    const H_SPACING = 56;
+    const rootX = 600;
+    
+    for (let d = 0; d < levels.length; d++) {
+        const ids = levels[d];
+        const n = ids.length;
+        const totalWidth = (n - 1) * H_SPACING;
+        const startX = rootX - totalWidth / 2;
+        ids.forEach((id, i) => {
+            pos[id] = { x: startX + i * H_SPACING, y: 50 + d * V_SPACING };
+        });
+    }
+    
+    return { pos, depth, parent, incomingChar, levels };
+}
+
+// ========== SVG 渲染 ==========
+let svgNS = "http://www.w3.org/2000/svg";
+let svgCanvas;
+let highlightedPath = new Set();
+let highlightEdges = new Set();
+let currentNode = -1;
+let queryResult = null; // { found, value }
+
+function initSvg() {
+    svgCanvas = document.getElementById('svgCanvas');
+}
+
+function clearSvg() {
+    if (!svgCanvas) return;
+    svgCanvas.innerHTML = '';
+}
+
+// 创建 SVG 元素
+function makeSVG(tag, attrs) {
+    const el = document.createElementNS(svgNS, tag);
+    for (const [k, v] of Object.entries(attrs)) {
+        el.setAttribute(k, v);
+    }
+    return el;
+}
+
+// 箭头标记
+function addDefs() {
+    const defs = makeSVG('defs', {});
+    const marker = makeSVG('marker', {
+        id: 'arrow', viewBox: '0 0 10 10', refX: 10, refY: 5,
+        markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse'
+    });
+    const arrowPath = makeSVG('path', {
+        d: 'M0,0 L10,5 L0,10 Z', fill: '#6c7086'
+    });
+    marker.appendChild(arrowPath);
+    defs.appendChild(marker);
+    
+    const markerH = makeSVG('marker', {
+        id: 'arrow-highlight', viewBox: '0 0 10 10', refX: 10, refY: 5,
+        markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse'
+    });
+    const arrowPathH = makeSVG('path', {
+        d: 'M0,0 L10,5 L0,10 Z', fill: '#f9e2af'
+    });
+    markerH.appendChild(arrowPathH);
+    defs.appendChild(markerH);
+    
+    const markerQ = makeSVG('marker', {
+        id: 'arrow-query', viewBox: '0 0 10 10', refX: 10, refY: 5,
+        markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse'
+    });
+    const arrowPathQ = makeSVG('path', {
+        d: 'M0,0 L10,5 L0,10 Z', fill: '#89b4fa'
+    });
+    markerQ.appendChild(arrowPathQ);
+    defs.appendChild(markerQ);
+    
+    svgCanvas.appendChild(defs);
+}
+
+function renderTree(nodes, layout) {
+    clearSvg();
+    if (!svgCanvas) return;
+    
+    svgCanvas.setAttribute('viewBox', '0 0 1200 700');
+    svgCanvas.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    
+    addDefs();
+    
+    const { pos, parent, incomingChar } = layout;
+    const NODE_R = 20;
+    
+    // 背景组
+    const bgGroup = makeSVG('g', {});
+    // 边组
+    const edgeGroup = makeSVG('g', {});
+    // 节点组
+    const nodeGroup = makeSVG('g', {});
+    // 高亮组
+    const hlGroup = makeSVG('g', {});
+    
+    // 绘制边
+    for (const [id, p] of Object.entries(parent)) {
+        const from = pos[p];
+        const to = pos[Number(id)];
+        if (!from || !to) continue;
+        
+        const edgeKey = `${p}-${id}`;
+        const isHL = highlightEdges.has(edgeKey);
+        const isQHL = stepMode === 'query' && highlightEdges.has(edgeKey);
+        
+        // 调整起止点（避免箭头被节点圆遮挡）
+        const dx = to.x - from.x;
+        const dy = to.y - from.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const ux = dx / dist, uy = dy / dist;
+        const sx = from.x + ux * (NODE_R - 2);
+        const sy = from.y + uy * (NODE_R - 2);
+        const ex = to.x - ux * (NODE_R - 2);
+        const ey = to.y - uy * (NODE_R - 2);
+        
+        let strokeColor = '#45475a';
+        let strokeWidth = 1.5;
+        let markerEnd = 'url(#arrow)';
+        
+        if (isHL && stepMode === 'build') {
+            strokeColor = '#f9e2af';
+            strokeWidth = 2.5;
+            markerEnd = 'url(#arrow-highlight)';
+        } else if (isQHL) {
+            strokeColor = '#89b4fa';
+            strokeWidth = 2.5;
+            markerEnd = 'url(#arrow-query)';
+        }
+        
+        const line = makeSVG('line', {
+            x1: sx, y1: sy, x2: ex, y2: ey,
+            stroke: strokeColor,
+            'stroke-width': strokeWidth,
+            'marker-end': markerEnd,
+            'stroke-opacity': isHL ? '1' : '0.5'
+        });
+        edgeGroup.appendChild(line);
+        
+        // 边标签
+        const char = incomingChar[Number(id)];
+        const mx = (sx + ex) / 2;
+        const my = (sy + ey) / 2;
+        
+        // 标签背景
+        const labelBg = makeSVG('rect', {
+            x: mx - 10, y: my - 10,
+            width: 20, height: 18,
+            rx: 4,
+            fill: isHL ? 'rgba(249,226,175,0.9)' : 'rgba(49,50,68,0.85)',
+            stroke: isHL ? '#f9e2af' : '#45475a',
+            'stroke-width': 1
+        });
+        edgeGroup.appendChild(labelBg);
+        
+        const label = makeSVG('text', {
+            x: mx, y: my + 4,
+            'text-anchor': 'middle',
+            fill: isHL ? '#1e1e2e' : '#cdd6f4',
+            'font-size': '13',
+            'font-weight': isHL ? 'bold' : 'normal',
+            'font-family': 'Consolas, monospace'
+        });
+        label.textContent = char;
+        edgeGroup.appendChild(label);
+    }
+    
+    // 绘制节点
+    for (const [nodeId, p] of Object.entries(pos)) {
+        const id = Number(nodeId);
+        const cx = p.x, cy = p.y;
+        const isHL = highlightedPath.has(id);
+        const isCurrent = id === currentNode;
+        const cnt = (cnts && cnts[id]) ? cnts[id] : 0;
+        
+        let fill = '#313244';
+        let stroke = '#6c7086';
+        let strokeW = 2;
+        
+        if (isCurrent) {
+            fill = '#cba6f7';
+            stroke = '#b4befe';
+            strokeW = 3;
+        } else if (isHL && stepMode === 'build') {
+            fill = 'rgba(249,226,175,0.25)';
+            stroke = '#f9e2af';
+            strokeW = 2.5;
+        } else if (isHL && stepMode === 'query') {
+            fill = 'rgba(137,180,250,0.2)';
+            stroke = '#89b4fa';
+            strokeW = 2.5;
+        }
+        
+        if (id === 0) {
+            // 根节点特殊样式 - 双层圆
+            const outer = makeSVG('circle', {
+                cx, cy, r: NODE_R + 3,
+                fill: 'none',
+                stroke: '#f5c2e7',
+                'stroke-width': 2,
+                'stroke-dasharray': '4 3'
+            });
+            nodeGroup.appendChild(outer);
+        }
+        
+        const circle = makeSVG('circle', {
+            cx, cy, r: NODE_R,
+            fill, stroke, 'stroke-width': strokeW,
+            class: 'node-circle'
+        });
+        
+        // 悬停效果
+        circle.addEventListener('mouseenter', () => {
+            circle.setAttribute('r', NODE_R + 4);
+            circle.setAttribute('stroke', '#cba6f7');
+        });
+        circle.addEventListener('mouseleave', () => {
+            circle.setAttribute('r', NODE_R);
+            circle.setAttribute('stroke', stroke);
+        });
+        
+        // 点击展开节点信息
+        circle.addEventListener('click', () => {
+            showNodeInfo(id, cnt, trie[id] || {});
+        });
+        
+        nodeGroup.appendChild(circle);
+        
+        // 节点标签 - id
+        const idText = makeSVG('text', {
+            x: cx, y: cy - 2,
+            'text-anchor': 'middle',
+            fill: isCurrent ? '#1e1e2e' : '#cdd6f4',
+            'font-size': '11',
+            'font-weight': 'bold',
+            'font-family': 'Consolas, monospace'
+        });
+        idText.textContent = id;
+        nodeGroup.appendChild(idText);
+        
+        // cnt 标注在节点上方
+        if (cnt > 0 || id === 0) {
+            const cntText = makeSVG('text', {
+                x: cx, y: cy - NODE_R - 8,
+                'text-anchor': 'middle',
+                fill: '#a6e3a1',
+                'font-size': '9',
+                'font-family': 'Consolas, monospace',
+                'font-weight': 'bold'
+            });
+            cntText.textContent = `cnt=${cnt}`;
+            nodeGroup.appendChild(cntText);
+            
+            // cnt 背景
+            const bbox = { width: cntText.textContent.length * 5.5, height: 12 };
+            const cntBg = makeSVG('rect', {
+                x: cx - bbox.width / 2 - 4, y: cy - NODE_R - 18,
+                width: bbox.width + 8, height: 14,
+                rx: 3,
+                fill: 'rgba(166,227,161,0.12)',
+                stroke: 'rgba(166,227,161,0.3)',
+                'stroke-width': 1
+            });
+            nodeGroup.insertBefore(cntBg, cntText);
+        }
+    }
+    
+    // 查询结果高亮
+    if (queryResult) {
+        const lastNode = pos[queryResult.lastNode];
+        if (lastNode) {
+            const resultText = makeSVG('text', {
+                x: lastNode.x, y: lastNode.y + NODE_R + 22,
+                'text-anchor': 'middle',
+                fill: queryResult.found ? '#a6e3a1' : '#f38ba8',
+                'font-size': '12',
+                'font-weight': 'bold',
+                'font-family': 'Microsoft YaHei, monospace'
+            });
+            resultText.textContent = queryResult.found ? `✅ 结果: ${queryResult.value}` : '❌ 未找到';
+            nodeGroup.appendChild(resultText);
+        }
+    }
+    
+    svgCanvas.appendChild(bgGroup);
+    svgCanvas.appendChild(edgeGroup);
+    svgCanvas.appendChild(nodeGroup);
+    svgCanvas.appendChild(hlGroup);
+}
+
+function showNodeInfo(id, cnt, children) {
+    const info = document.getElementById('stepInfo');
+    const childrenStr = Object.entries(children).map(([c, nid]) => `'${c}'→${nid}`).join(', ');
+    info.innerHTML = `
+        <span style="color:#cba6f7;">节点 [${id}]</span> 
+        cnt=<span style="color:#a6e3a1;">${cnt}</span> 
+        子节点: ${childrenStr ? `<span style="color:#89b4fa;">${childrenStr}</span>` : '<span style="color:#585b70;">无</span>'}
+    `;
+}
+
+// ========== 逻辑 ==========
+function highlightCodeLine(lineId) {
+    document.querySelectorAll('.code-line').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById(lineId);
+    if (el) el.classList.add('active');
+}
+
+function updateStepInfo(msg) {
+    document.getElementById('stepInfo').innerHTML = msg;
+}
+
+function buildAndShow() {
+    parseInput();
+    initTrie();
+    buildIndex = 0;
+    queryIndex = 0;
+    stepMode = 'build';
+    highlightedPath.clear();
+    highlightEdges.clear();
+    currentNode = -1;
+    queryResult = null;
+    
+    // 插入所有串
+    for (const s of patterns) {
+        insertOne(s);
+    }
+    
+    // 渲染完整树
+    const nodes = collectTree();
+    const layout = layoutTree(nodes);
+    renderTree(nodes, layout);
+    
+    updateStepInfo(`
+        ✅ 构建完成！共 <span style="color:#f9e2af;">${patterns.length}</span> 个模式串，
+        <span style="color:#a6e3a1;">${trie.length}</span> 个节点<br>
+        点击 <span style="color:#a6e3a1;">「逐步插入」</span> 查看构建过程，
+        或 <span style="color:#89b4fa;">「逐步查询」</span> 查看查询过程
+    `);
+    
+    updateCodeDisplay('idle');
+}
+
+function stepInsert() {
+    parseInput();
+    if (patterns.length === 0) {
+        updateStepInfo('⚠️ 请输入模式串');
+        return;
+    }
+    stepMode = 'build';
+    
+    if (buildIndex >= patterns.length) {
+        buildIndex = 0;
+        initTrie();
+        updateStepInfo('🔄 已重置，从第一个模式串重新开始...');
+    }
+    
+    const s = patterns[buildIndex];
+    
+    // 重新构建 trie（从 0 到 buildIndex）
+    initTrie();
+    highlightedPath.clear();
+    highlightEdges.clear();
+    currentNode = -1;
+    
+    let currentPath = [];
+    let currentEdgeKeys = [];
+    
+    for (let i = 0; i < buildIndex; i++) {
+        insertOne(patterns[i]);
+    }
+    
+    // 现在插入当前串，并高亮路径
+    let cur = 0;
+    highlightedPath.add(0);
+    for (const c of s) {
+        let nxt = trie[cur][c];
+        if (nxt === undefined) {
+            nxt = trie.length;
+            trie[cur][c] = nxt;
+            trie.push({});
+            cnts.push(0);
+        }
+        cur = nxt;
+        cnts[cur] += 1;
+        highlightedPath.add(cur);
+        highlightEdges.add(`${cur === nxt ? Object.keys(trie[cur]).length > 0 ? cur : cur : cur}`);
+    }
+    
+    // 重新计算精确路径
+    highlightedPath.clear();
+    highlightEdges.clear();
+    cur = 0;
+    highlightedPath.add(0);
+    currentPath = [0];
+    for (const c of s) {
+        const nxt = trie[cur][c];
+        highlightEdges.add(`${cur}-${nxt}`);
+        cur = nxt;
+        highlightedPath.add(cur);
+        currentPath.push(cur);
+    }
+    
+    currentNode = currentPath[currentPath.length - 1];
+    queryResult = null;
+    
+    const nodes = collectTree();
+    const layout = layoutTree(nodes);
+    renderTree(nodes, layout);
+    
+    const sHighlighted = s.split('').map((c, i) => {
+        return `<span class="highlight-char">${c}</span>`;
+    }).join('');
+    
+    updateStepInfo(`
+        🌱 插入模式串 <span style="color:#f9e2af;font-weight:bold;">"${s}"</span> 
+        (第 ${buildIndex + 1}/${patterns.length} 个)<br>
+        路径: [${currentPath.join(' → ')}] 
+        字符: ${sHighlighted}
+    `);
+    
+    updateCodeDisplay('build');
+    highlightCodeLine('code-insert-for');
+    
+    buildIndex++;
+    if (buildIndex >= patterns.length) {
+        updateStepInfo(`
+            ✅ 所有模式串已插入完毕！<br>
+            最终路径: [${currentPath.join(' → ')}] 
+            串 "${s}" 插入完成，cnt[${currentNode}] = ${cnts[currentNode]}
+        `);
+        updateCodeDisplay('build-done');
+    }
+}
+
+function stepQuery() {
+    parseInput();
+    if (queries.length === 0) {
+        updateStepInfo('⚠️ 请输入查询串');
+        return;
+    }
+    
+    // 确保 trie 已构建
+    if (trie.length <= 1) {
+        initTrie();
+        for (const s of patterns) insertOne(s);
+    }
+    
+    stepMode = 'query';
+    
+    if (queryIndex >= queries.length) {
+        queryIndex = 0;
+        updateStepInfo('🔄 已重置，从第一个查询串重新开始...');
+    }
+    
+    const t = queries[queryIndex];
+    
+    highlightedPath.clear();
+    highlightEdges.clear();
+    currentNode = -1;
+    queryResult = null;
+    
+    // 模拟查询并高亮
+    let cur = 0;
+    highlightedPath.add(0);
+    let found = true;
+    const queryPath = [0];
+    const charsMatched = [];
+    
+    for (const c of t) {
+        const nxt = trie[cur][c];
+        if (nxt === undefined) {
+            found = false;
+            break;
+        }
+        highlightEdges.add(`${cur}-${nxt}`);
+        cur = nxt;
+        highlightedPath.add(cur);
+        queryPath.push(cur);
+        charsMatched.push(c);
+    }
+    
+    currentNode = cur;
+    
+    if (found) {
+        queryResult = { found: true, value: cnts[cur], lastNode: cur };
+    } else {
+        queryResult = { found: false, value: 0, lastNode: cur };
+    }
+    
+    const nodes = collectTree();
+    const layout = layoutTree(nodes);
+    renderTree(nodes, layout);
+    
+    const matchedStr = charsMatched.map(c => `<span class="highlight-char">${c}</span>`).join('');
+    const remaining = t.slice(charsMatched.length);
+    const remainingStr = remaining ? `<span style="color:#f38ba8;text-decoration:line-through;">${remaining}</span>` : '';
+    
+    if (found) {
+        updateStepInfo(`
+            🔍 查询 <span style="color:#89b4fa;font-weight:bold;">"${t}"</span> 
+            (第 ${queryIndex + 1}/${queries.length} 个)<br>
+            匹配路径: [${queryPath.join(' → ')}]
+            前缀计数 cnt = <span style="color:#a6e3a1;font-weight:bold;">${cnts[cur]}</span>
+        `);
+    } else {
+        updateStepInfo(`
+            🔍 查询 <span style="color:#89b4fa;font-weight:bold;">"${t}"</span>
+            (第 ${queryIndex + 1}/${queries.length} 个)<br>
+            匹配: ${matchedStr}${remainingStr} 
+            在字符 <span style="color:#f38ba8;">'${t[charsMatched.length]}'</span> 处中断<br>
+            <span style="color:#f38ba8;">❌ 未找到</span> → 结果: 0
+        `);
+    }
+    
+    updateCodeDisplay('query');
+    highlightCodeLine('code-query-for');
+    
+    queryIndex++;
+    if (queryIndex >= queries.length) {
+        updateCodeDisplay('query-done');
+    }
+}
+
+function showFullTree() {
+    parseInput();
+    initTrie();
+    for (const s of patterns) insertOne(s);
+    
+    buildIndex = 0;
+    queryIndex = 0;
+    stepMode = '';
+    highlightedPath.clear();
+    highlightEdges.clear();
+    currentNode = -1;
+    queryResult = null;
+    
+    const nodes = collectTree();
+    const layout = layoutTree(nodes);
+    renderTree(nodes, layout);
+    
+    updateStepInfo(`
+        🌲 完整字典树 
+        <span style="color:#a6e3a1;">${trie.length}</span> 个节点
+    `);
+    updateCodeDisplay('idle');
+}
+
+function resetAll() {
+    initTrie();
+    buildIndex = 0;
+    queryIndex = 0;
+    stepMode = '';
+    highlightedPath.clear();
+    highlightEdges.clear();
+    currentNode = -1;
+    queryResult = null;
+    clearSvg();
+    updateStepInfo('🔄 已重置。点击「重置 & 构建」开始可视化…');
+    updateCodeDisplay('idle');
+}
+
+// ========== 代码面板 ==========
+const codeLines = [
+    { id: 'code-1', text: '# 核心数据结构', cls: 'code-comment' },
+    { id: 'code-2', text: 'trie = [{}]      # trie[i] = {字符: 子节点索引}' },
+    { id: 'code-3', text: 'cnts = [0]       # cnts[i] = 经过节点 i 的前缀数量' },
+    { id: 'code-blank1', text: '' },
+    { id: 'code-build-title', text: '# === 构建阶段：插入模式串 ===', cls: 'code-comment' },
+    { id: 'code-insert-for', text: 'for c in s:                    # 遍历每个字符' },
+    { id: 'code-insert-get', text: '    nxt = trie[cur].get(c)      # 查找子节点' },
+    { id: 'code-insert-new', text: '    if nxt is None:             # 不存在则新建' },
+    { id: 'code-insert-new2', text: '        nxt = len(trie)          # 新节点索引' },
+    { id: 'code-insert-new3', text: '        trie[cur][c] = nxt       # 建立边' },
+    { id: 'code-insert-new4', text: '        trie.append({})          # 新节点字典' },
+    { id: 'code-insert-new5', text: '        cnts.append(0)           # 新节点计数' },
+    { id: 'code-insert-move', text: '    cur = nxt                   # 移动到子节点' },
+    { id: 'code-insert-cnt', text: '    cnts[cur] += 1               # 经过计数 +1' },
+    { id: 'code-blank2', text: '' },
+    { id: 'code-query-title', text: '# === 查询阶段：前缀匹配 ===', cls: 'code-comment' },
+    { id: 'code-query-for', text: 'for c in t:                    # 遍历查询串字符' },
+    { id: 'code-query-get', text: '    cur = trie[cur].get(c,-1)   # 找子节点，找不到=-1' },
+    { id: 'code-query-break', text: '    if cur == -1: break        # 匹配失败，退出' },
+    { id: 'code-query-result', text: '# 若匹配完 → 输出 cnts[cur]' },
+    { id: 'code-query-result2', text: '# 若中断   → 输出 0' },
+];
+
+function updateCodeDisplay(mode) {
+    const panel = document.getElementById('codePanel');
+    let html = '<pre>';
+    
+    const activateSet = new Set();
+    const dimSet = new Set();
+    
+    if (mode === 'build') {
+        activateSet.add('code-build-title');
+        activateSet.add('code-insert-for');
+        activateSet.add('code-insert-get');
+        activateSet.add('code-insert-move');
+        activateSet.add('code-insert-cnt');
+        dimSet.add('code-query-title');
+        dimSet.add('code-query-for');
+        dimSet.add('code-query-get');
+        dimSet.add('code-query-break');
+        dimSet.add('code-query-result');
+        dimSet.add('code-query-result2');
+    } else if (mode === 'build-done') {
+        // 全部构建代码高亮
+        for (const l of codeLines) {
+            if (l.id && l.id.startsWith('code-insert') || l.id === 'code-build-title') {
+                activateSet.add(l.id);
+            }
+        }
+        dimSet.add('code-query-title');
+        dimSet.add('code-query-for');
+        dimSet.add('code-query-get');
+        dimSet.add('code-query-break');
+        dimSet.add('code-query-result');
+        dimSet.add('code-query-result2');
+    } else if (mode === 'query') {
+        activateSet.add('code-query-title');
+        activateSet.add('code-query-for');
+        activateSet.add('code-query-get');
+        activateSet.add('code-query-break');
+        activateSet.add('code-query-result');
+        activateSet.add('code-query-result2');
+        dimSet.add('code-build-title');
+        dimSet.add('code-insert-for');
+        dimSet.add('code-insert-get');
+        dimSet.add('code-insert-new');
+        dimSet.add('code-insert-new2');
+        dimSet.add('code-insert-new3');
+        dimSet.add('code-insert-new4');
+        dimSet.add('code-insert-new5');
+        dimSet.add('code-insert-move');
+        dimSet.add('code-insert-cnt');
+    } else if (mode === 'query-done') {
+        for (const l of codeLines) {
+            if (l.id && (l.id.startsWith('code-query') || l.id.startsWith('code-insert') ||
+                l.id === 'code-build-title' || l.id === 'code-query-title')) {
+                // all visible
+            }
+        }
+    } else {
+        // idle: all dimmed
+        dimSet.add('code-build-title');
+        dimSet.add('code-insert-for');
+        dimSet.add('code-insert-get');
+        dimSet.add('code-insert-new');
+        dimSet.add('code-insert-new2');
+        dimSet.add('code-insert-new3');
+        dimSet.add('code-insert-new4');
+        dimSet.add('code-insert-new5');
+        dimSet.add('code-insert-move');
+        dimSet.add('code-insert-cnt');
+        dimSet.add('code-query-title');
+        dimSet.add('code-query-for');
+        dimSet.add('code-query-get');
+        dimSet.add('code-query-break');
+        dimSet.add('code-query-result');
+        dimSet.add('code-query-result2');
+    }
+    
+    for (const l of codeLines) {
+        let classes = 'code-line';
+        if (l.cls) classes += ' ' + l.cls;
+        if (activateSet.has(l.id)) classes += ' active';
+        if (dimSet.has(l.id)) classes += ' dim';
+        const idAttr = l.id ? ` id="${l.id}"` : '';
+        html += `<span class="${classes}"${idAttr}>${escapeHtml(l.text)}</span>\n`;
+    }
+    
+    html += '</pre>';
+    panel.innerHTML = html;
+}
+
+function escapeHtml(text) {
+    return text.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+}
+
+// ========== 初始化 ==========
+initSvg();
+updateCodeDisplay('idle');
+
+// 自动构建初始树
+setTimeout(() => {
+    parseInput();
+    initTrie();
+    for (const s of patterns) insertOne(s);
+    const nodes = collectTree();
+    const layout = layoutTree(nodes);
+    renderTree(nodes, layout);
+    updateStepInfo(`
+        ✅ 已自动构建字典树！<span style="color:#a6e3a1;">${trie.length}</span> 个节点<br>
+        点击 <span style="color:#a6e3a1;">「逐步插入」</span> 查看构建过程，
+        或 <span style="color:#89b4fa;">「逐步查询」</span> 查看查询过程
+    `);
+    updateCodeDisplay('idle');
+}, 300);
+
+// 窗口大小改变时重新渲染
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        if (trie.length > 0) {
+            const nodes = collectTree();
+            const layout = layoutTree(nodes);
+            renderTree(nodes, layout);
+        }
+    }, 200);
+});
+</script>
+
+</body>
+</html>

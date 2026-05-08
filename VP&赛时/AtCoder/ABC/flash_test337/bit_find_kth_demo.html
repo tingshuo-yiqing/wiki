@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>树状数组求第 k 小 - 动态演示</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; background: #f0f4f8; padding: 20px; color: #1a202c; }
+.container { max-width: 1000px; margin: 0 auto; }
+h1 { text-align: center; font-size: 24px; margin-bottom: 6px; }
+h2 { text-align: center; font-size: 14px; color: #555; font-weight: normal; margin-bottom: 20px; }
+
+/* Controls */
+.controls { background: #fff; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.controls label { font-weight: 600; font-size: 14px; }
+.controls input[type=text] { width: 260px; padding: 6px 10px; border: 2px solid #cbd5e0; border-radius: 6px; font-size: 14px; font-family: monospace; outline: none; }
+.controls input[type=text]:focus { border-color: #4299e1; }
+.controls button { padding: 7px 18px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: .15s; }
+.btn-primary { background: #4299e1; color: #fff; }
+.btn-primary:hover { background: #3182ce; }
+.btn-success { background: #48bb78; color: #fff; }
+.btn-success:hover { background: #38a169; }
+.btn-warning { background: #ed8936; color: #fff; }
+.btn-warning:hover { background: #dd6b20; }
+.btn-danger { background: #fc8181; color: #fff; }
+.btn-danger:hover { background: #f56565; }
+.btn-outline { background: transparent; color: #4a5568; border: 1px solid #cbd5e0; }
+.btn-outline:hover { background: #edf2f7; }
+.controls .hint { font-size: 12px; color: #718096; margin-left: auto; }
+
+/* BIT Visualization */
+.bit-section { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.bit-section h3 { font-size: 16px; margin-bottom: 14px; }
+.bit-grid { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.bit-cell { width: 86px; border-radius: 8px; padding: 8px 4px; text-align: center; border: 2px solid transparent; transition: .2s; position: relative; }
+.bit-cell .idx { font-size: 11px; color: #718096; font-weight: 600; }
+.bit-cell .freq-label { font-size: 10px; color: #a0aec0; }
+.bit-cell .freq { font-size: 13px; font-weight: 700; }
+.bit-cell .bar { height: 4px; border-radius: 2px; margin: 4px auto 0; max-width: 80%; background: #e2e8f0; overflow: hidden; }
+.bit-cell .bar-fill { height: 100%; background: #4299e1; border-radius: 2px; transition: width .3s; }
+.bit-cell .coverage { font-size: 10px; color: #a0aec0; margin-top: 2px; }
+.bit-cell.highlight-nxt { border-color: #ed8936; background: #fffbeb; }
+.bit-cell.highlight-nxt .idx { color: #ed8936; }
+.bit-cell.highlight-skip { border-color: #fc8181; background: #fff5f5; }
+.bit-cell.highlight-final { border-color: #48bb78; background: #f0fff4; }
+.bit-cell.highlight-final .idx { color: #38a169; }
+.bit-cell.highlight-active { border-color: #4299e1; background: #ebf8ff; }
+
+/* Step-by-step display */
+.step-section { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.step-section h3 { font-size: 16px; margin-bottom: 14px; }
+.step-panel { display: flex; gap: 20px; flex-wrap: wrap; }
+.step-vars { flex: 1; min-width: 260px; }
+.var-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.var-table td { padding: 6px 8px; border-bottom: 1px solid #e2e8f0; }
+.var-table td:first-child { font-weight: 600; color: #4a5568; width: 70px; }
+.var-table td:last-child { font-family: monospace; font-size: 15px; }
+.var-table .highlight { color: #ed8936; font-weight: 700; }
+.var-table .skip { color: #e53e3e; font-weight: 700; }
+.var-table .final { color: #38a169; font-weight: 700; }
+.step-desc { flex: 2; min-width: 280px; }
+.step-desc .desc-box { background: #f7fafc; border-radius: 8px; padding: 12px 16px; min-height: 80px; font-size: 14px; line-height: 1.7; border-left: 4px solid #4299e1; }
+.step-desc .desc-box .hl { color: #ed8936; font-weight: 700; }
+.step-desc .desc-box .hl-red { color: #e53e3e; font-weight: 700; }
+.step-desc .desc-box .hl-green { color: #38a169; font-weight: 700; }
+
+/* Algorithm steps */
+.alg-steps { margin-top: 14px; }
+.alg-step { padding: 6px 10px; margin-bottom: 4px; border-radius: 6px; font-size: 13px; background: #f7fafc; border-left: 3px solid #cbd5e0; transition: .2s; }
+.alg-step.current { background: #fffbeb; border-left-color: #ed8936; font-weight: 600; }
+.alg-step.done { background: #f0fff4; border-left-color: #48bb78; }
+.alg-step.pending { opacity: 0.6; }
+
+/* Sequence display */
+.seq-section { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.seq-section h3 { font-size: 16px; margin-bottom: 14px; }
+.seq-display { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; padding: 12px; background: #f7fafc; border-radius: 8px; min-height: 48px; }
+.seq-item { padding: 4px 10px; background: #ebf8ff; border-radius: 4px; font-size: 14px; font-weight: 600; border: 1px solid #bee3f8; }
+.seq-item.kth { background: #f0fff4; border-color: #48bb78; color: #276749; }
+
+/* Result area */
+.result-section { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; }
+.result-section .big { font-size: 28px; font-weight: 700; color: #2b6cb0; }
+
+/* Info */
+.info-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 10px; }
+.info-item { background: #f7fafc; border-radius: 6px; padding: 8px 14px; font-size: 13px; }
+.info-item strong { color: #4a5568; }
+.info-item span { font-weight: 700; color: #2d3748; }
+
+/* Preset buttons */
+.presets { display: flex; gap: 6px; flex-wrap: wrap; }
+.presets button { padding: 4px 12px; font-size: 12px; border: 1px solid #cbd5e0; border-radius: 4px; background: #fff; cursor: pointer; }
+.presets button:hover { background: #edf2f7; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🏗️ 树状数组求第 k 小：动态演示</h1>
+  <h2>Binary Indexed Tree · Fenwick Tree · Binary Lifting (倍增)</h2>
+
+  <!-- Controls -->
+  <div class="controls">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:100%;">
+      <label>频次序列 (freq[1..N])：</label>
+      <input type="text" id="freqInput" value="2,0,1,3,0,0,2,0" placeholder="逗号分隔的整数">
+      <label style="margin-left:8px;">k =</label>
+      <input type="text" id="kInput" value="5" style="width:60px;">
+      <button class="btn-primary" onclick="initDemo()">🔄 初始化</button>
+      <div class="presets">
+        <button onclick="setPreset('2,0,1,3,0,0,2,0', 5)">例1</button>
+        <button onclick="setPreset('1,1,1,1,1', 3)">例2</button>
+        <button onclick="setPreset('3,5,2,0,4', 6)">例3</button>
+        <button onclick="setPreset('0,0,0,10,0,0,0', 7)">例4</button>
+        <button onclick="setPreset('1,2,3,4,5', 8)">例5</button>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:100%;margin-top:4px;">
+      <button class="btn-success" id="stepBtn" onclick="stepOnce()">▶ 单步执行</button>
+      <button class="btn-warning" id="resetBtn" onclick="resetDemo()">⟳ 重置</button>
+      <button class="btn-outline" id="autoBtn" onclick="toggleAuto()">⏩ 自动播放</button>
+      <span class="hint" id="stepHint">点击「单步执行」开始演示</span>
+    </div>
+  </div>
+
+  <!-- Info -->
+  <div class="info-row">
+    <div class="info-item"><strong>N</strong> = <span id="infoN">8</span></div>
+    <div class="info-item"><strong>max_pow</strong> = <span id="infoMaxPow">8</span></div>
+    <div class="info-item"><strong>总元素数</strong> = <span id="infoTotal">8</span></div>
+    <div class="info-item"><strong>k</strong> = <span id="infoK">5</span>（第 <span id="infoKOrdinal">5</span> 小）</div>
+  </div>
+
+  <!-- BIT Visualization -->
+  <div class="bit-section">
+    <h3>📊 BIT 数组（每个节点存储对应区间的频次和）</h3>
+    <div class="bit-grid" id="bitGrid"></div>
+  </div>
+
+  <!-- Sequence display -->
+  <div class="seq-section">
+    <h3>📋 实际有序序列（展开频次）</h3>
+    <div class="seq-display" id="seqDisplay"></div>
+  </div>
+
+  <!-- Step display -->
+  <div class="step-section">
+    <h3>🔍 执行过程</h3>
+    <div class="step-panel">
+      <div class="step-vars">
+        <table class="var-table" id="varTable">
+          <tr><td>idx</td><td id="vIdx">0</td></tr>
+          <tr><td>k</td><td id="vK">5</td></tr>
+          <tr><td>bitmask</td><td id="vBitmask">8</td></tr>
+          <tr><td>nxt</td><td id="vNxt">—</td></tr>
+          <tr><td>bit[nxt]</td><td id="vBitNxt">—</td></tr>
+          <tr><td>决策</td><td id="vDecision">等待开始</td></tr>
+        </table>
+      </div>
+      <div class="step-desc">
+        <div class="desc-box" id="descBox">
+          <strong>说明</strong><br>
+          输入频次序列后点击「初始化」，然后使用「单步执行」逐步查看 BIT 的 find_kth 执行过程。
+        </div>
+      </div>
+    </div>
+    <div class="alg-steps" id="algSteps"></div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-section" id="resultSection">
+    <div style="font-size:14px;color:#718096;">最终结果</div>
+    <div class="big" id="resultDisplay">—</div>
+    <div style="font-size:13px;color:#718096;margin-top:4px;" id="resultDetail">等待执行...</div>
+  </div>
+</div>
+
+<script>
+// ============ State ============
+let state = {
+  N: 0,
+  freq: [],
+  bit: [],
+  maxPow: 0,
+  total: 0,
+  targetK: 0,
+  idx: 0,
+  k: 0,
+  bitmask: 0,
+  step: -1,
+  history: [],     // array of snapshots
+  done: false,
+  autoTimer: null,
+};
+
+// ============ BIT Functions ============
+function buildBIT(freq) {
+  const n = freq.length - 1; // 1-based
+  const bit = new Array(n + 1).fill(0);
+  for (let i = 1; i <= n; i++) {
+    let j = i;
+    while (j <= n) {
+      bit[j] += freq[i];
+      j += j & -j;
+    }
+  }
+  return bit;
+}
+
+function maxPow(n) {
+  let p = 1;
+  while ((p << 1) <= n) p <<= 1;
+  return p;
+}
+
+// Compute total elements from freq
+function totalElements(freq) {
+  return freq.reduce((a, b) => a + b, 0);
+}
+
+// Expand freq to actual sorted sequence
+function expandFreq(freq) {
+  const result = [];
+  for (let i = 1; i < freq.length; i++) {
+    for (let j = 0; j < freq[i]; j++) {
+      result.push(i);
+    }
+  }
+  return result;
+}
+
+// ============ Algorithm Steps Generator ============
+function generateSteps(freq, k) {
+  const n = freq.length - 1;
+  const bit = buildBIT(freq);
+  const mp = maxPow(n);
+  const total = totalElements(freq);
+
+  let steps = [];
+  let idx = 0;
+  let curK = k;
+  let bitmask = mp;
+
+  // Initial state
+  steps.push({
+    type: 'init',
+    idx: 0, k: curK, bitmask: mp, nxt: null, bitNxt: null,
+    decision: '初始状态',
+    description: '开始查找第 <span class="hl">' + k + '</span> 小的元素。<br>idx = 0（当前已确认前缀和不足 k 的位置），bitmask 从最大 2 的幂 <span class="hl">' + mp + '</span> 开始。',
+    highlight: []
+  });
+
+  while (bitmask > 0) {
+    const nxt = idx + bitmask;
+    const val = nxt <= n ? bit[nxt] : Infinity;
+    const canSkip = (nxt <= n && val < curK);
+
+    let decision, desc;
+    let hlType;
+    if (canSkip) {
+      decision = '✅ 跳过（第 ' + nxt + ' 个节点覆盖区间元素数 ' + val + ' < 剩余 k=' + curK + '）';
+      desc = 'nxt = ' + idx + ' + ' + bitmask + ' = <span class="hl">' + nxt + '</span>，bit[' + nxt + '] = <span class="hl-red">' + val + '</span> < ' + curK + '<br>→ 这段区间不足以包含第 k 小元素，<span class="hl-red">跳过</span>。<br>k = ' + curK + ' − ' + val + ' = <span class="hl-red">' + (curK - val) + '</span>，idx = ' + idx + ' → <span class="hl-red">' + nxt + '</span>';
+      hlType = 'skip';
+    } else if (nxt > n) {
+      decision = '⛔ nxt 越界，缩小步长';
+      desc = 'nxt = ' + idx + ' + ' + bitmask + ' = <span class="hl">' + nxt + '</span> 超出范围 N=' + n + '，无法查看。<br>→ 缩小 bitmask。';
+      hlType = 'none';
+    } else {
+      decision = '❌ 不跳过（第 ' + nxt + ' 个节点覆盖区间元素数 ' + val + ' >= 剩余 k=' + curK + '）';
+      desc = 'nxt = ' + idx + ' + ' + bitmask + ' = <span class="hl">' + nxt + '</span>，bit[' + nxt + '] = <span class="hl">' + val + '</span> >= ' + curK + '<br>→ 第 k 小元素就在这段区间内，<span class="hl">不能跳过</span>。<br>保持 idx=' + idx + ', k=' + curK + '，缩小 bitmask。';
+      hlType = 'nxt';
+    }
+
+    steps.push({
+      type: 'step',
+      idx: idx,
+      k: curK,
+      bitmask: bitmask,
+      nxt: nxt,
+      bitNxt: nxt <= n ? val : null,
+      decision: decision,
+      description: desc,
+      highlight: [nxt],
+      hlType: hlType,
+    });
+
+    if (canSkip) {
+      curK -= val;
+      idx = nxt;
+    }
+
+    bitmask >>= 1;
+  }
+
+  // Final
+  const finalIdx = idx + 1;
+  steps.push({
+    type: 'final',
+    idx: idx,
+    k: curK,
+    bitmask: bitmask,
+    nxt: null,
+    bitNxt: null,
+    decision: '🎯 找到！第 k 小元素的位置 = ' + finalIdx,
+    description: 'bitmask 降为 0，结束。<br>idx = <span class="hl">' + idx + '</span><br>最终位置 = idx + 1 = <span class="hl-green">' + finalIdx + '</span><br>即第 <span class="hl-green">' + finalIdx + '</span> 个值（若 N=8，对应原始值 ' + finalIdx + '）。',
+    highlight: [finalIdx],
+    hlType: 'final',
+  });
+
+  return { steps, bit, finalIdx };
+}
+
+// ============ Render ============
+function renderBIT(freq, bit, highlight = [], hlType = '') {
+  const grid = document.getElementById('bitGrid');
+  grid.innerHTML = '';
+  const n = freq.length - 1;
+
+  for (let i = 1; i <= n; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'bit-cell';
+    if (highlight.includes(i)) {
+      if (hlType === 'skip') cell.classList.add('highlight-skip');
+      else if (hlType === 'final') cell.classList.add('highlight-final');
+      else if (hlType === 'nxt') cell.classList.add('highlight-nxt');
+      else cell.classList.add('highlight-active');
+    }
+
+    // Coverage info
+    const lowbit = i & -i;
+    const coverStart = i - lowbit + 1;
+    const coverEnd = i;
+    const coverageStr = coverStart === coverEnd ? `[${coverStart}]` : `[${coverStart}~${coverEnd}]`;
+
+    // Bar width
+    const maxVal = Math.max(...bit.slice(1), 1);
+    const barPct = (bit[i] / maxVal * 100).toFixed(0);
+
+    cell.innerHTML = `
+      <div class="idx">${i}</div>
+      <div class="freq">${bit[i]}</div>
+      <div class="bar"><div class="bar-fill" style="width:${barPct}%"></div></div>
+      <div class="coverage">${coverageStr}</div>
+    `;
+    grid.appendChild(cell);
+  }
+}
+
+function renderSequence(freq, finalIdx = null) {
+  const seq = expandFreq(freq);
+  const container = document.getElementById('seqDisplay');
+  container.innerHTML = '';
+  if (seq.length === 0) {
+    container.innerHTML = '<span style="color:#a0aec0;">（空序列）</span>';
+    return;
+  }
+  seq.forEach((v, i) => {
+    const el = document.createElement('div');
+    el.className = 'seq-item';
+    el.textContent = v;
+    if (finalIdx !== null && i + 1 === finalIdx) {
+      el.classList.add('kth');
+      el.textContent = '★' + v;
+    }
+    container.appendChild(el);
+  });
+}
+
+function renderVars(step) {
+  document.getElementById('vIdx').textContent = step.idx;
+  document.getElementById('vIdx').className = '';
+  document.getElementById('vK').textContent = step.k;
+  document.getElementById('vK').className = '';
+  document.getElementById('vBitmask').textContent = step.bitmask;
+  document.getElementById('vBitmask').className = '';
+  document.getElementById('vNxt').textContent = step.nxt !== null ? step.nxt : '—';
+  document.getElementById('vNxt').className = '';
+  document.getElementById('vBitNxt').textContent = step.bitNxt !== null ? step.bitNxt : '—';
+  document.getElementById('vBitNxt').className = '';
+  document.getElementById('vDecision').textContent = step.decision;
+  document.getElementById('vDecision').className = '';
+  document.getElementById('descBox').innerHTML = step.description;
+
+  if (step.hlType === 'skip') {
+    document.getElementById('vIdx').className = 'skip';
+    document.getElementById('vK').className = 'skip';
+    document.getElementById('vDecision').className = 'skip';
+  } else if (step.hlType === 'final') {
+    document.getElementById('vIdx').className = 'final';
+    document.getElementById('vDecision').className = 'final';
+  } else if (step.hlType === 'nxt') {
+    document.getElementById('vIdx').className = '';
+    document.getElementById('vK').className = '';
+  }
+}
+
+function renderAlgSteps(steps, current) {
+  const container = document.getElementById('algSteps');
+  container.innerHTML = '';
+  for (let i = 0; i < steps.length; i++) {
+    const s = steps[i];
+    const el = document.createElement('div');
+    el.className = 'alg-step';
+    if (i < current) el.classList.add('done');
+    else if (i === current) el.classList.add('current');
+    else el.classList.add('pending');
+    let label = '';
+    if (s.type === 'init') label = '🏁 初始化';
+    else if (s.type === 'final') label = '🎯 结果';
+    else label = '🔍 迭代 bitmask=' + s.bitmask + ' (nxt=' + s.nxt + ')';
+    el.textContent = label;
+    container.appendChild(el);
+  }
+}
+
+function updateInfo(freq, k) {
+  const n = freq.length - 1;
+  document.getElementById('infoN').textContent = n;
+  document.getElementById('infoMaxPow').textContent = maxPow(n);
+  document.getElementById('infoTotal').textContent = totalElements(freq);
+  document.getElementById('infoK').textContent = k;
+  const ord = k + (k % 10 === 1 && k % 100 !== 11 ? 'st' : k % 10 === 2 && k % 100 !== 12 ? 'nd' : k % 10 === 3 && k % 100 !== 13 ? 'rd' : 'th');
+  document.getElementById('infoKOrdinal').textContent = ord;
+}
+
+// ============ Demo Control ============
+function initDemo() {
+  clearAuto();
+
+  const raw = document.getElementById('freqInput').value;
+  const arr = raw.split(',').map(s => parseInt(s.trim()));
+  const k = parseInt(document.getElementById('kInput').value);
+  if (arr.some(isNaN) || arr.length === 0 || isNaN(k)) {
+    alert('请输入有效数字！');
+    return;
+  }
+  if (k <= 0 || k > totalElements([0, ...arr])) {
+    alert('k 超过了总元素数！');
+    return;
+  }
+
+  const freq = [0, ...arr]; // 1-based
+  const N = freq.length - 1;
+  const bit = buildBIT(freq);
+  const mp = maxPow(N);
+  const total = totalElements(freq);
+
+  state.freq = freq;
+  state.bit = bit;
+  state.N = N;
+  state.maxPow = mp;
+  state.total = total;
+  state.targetK = k;
+  state.step = -1;
+  state.done = false;
+
+  const result = generateSteps(freq, k);
+  state.history = result.steps;
+  state.finalIdx = result.finalIdx;
+
+  updateInfo(freq, k);
+  renderBIT(freq, bit);
+  renderSequence(freq);
+
+  // Reset UI
+  document.getElementById('stepHint').textContent = '点击「单步执行」开始演示';
+  document.getElementById('resultDisplay').textContent = '—';
+  document.getElementById('resultDetail').textContent = '等待执行...';
+  document.getElementById('stepBtn').disabled = false;
+  document.getElementById('resetBtn').disabled = false;
+
+  renderVars({
+    idx: 0, k: k, bitmask: mp, nxt: null, bitNxt: null,
+    decision: '等待开始...', description: '点击「单步执行」逐步查看 BIT find_kth 的推算过程。',
+    hlType: ''
+  });
+  renderAlgSteps(state.history, -1);
+
+  // Highlight none
+  renderBIT(freq, bit);
+}
+
+function stepOnce() {
+  if (state.done) return;
+  if (state.history.length === 0) {
+    alert('请先初始化！');
+    return;
+  }
+
+  state.step++;
+  if (state.step >= state.history.length) {
+    state.step = state.history.length - 1;
+    state.done = true;
+    document.getElementById('stepBtn').disabled = true;
+    document.getElementById('stepHint').textContent = '✅ 演示完成！';
+    return;
+  }
+
+  const s = state.history[state.step];
+  renderVars(s);
+  renderAlgSteps(state.history, state.step);
+
+  // Highlight BIT cells
+  if (s.type === 'init') {
+    renderBIT(state.freq, state.bit, [], '');
+    document.getElementById('stepHint').textContent = '第 ' + (state.step + 1) + ' / ' + state.history.length + ' 步';
+  } else if (s.type === 'final') {
+    renderBIT(state.freq, state.bit, [s.highlight[0]], 'final');
+    renderSequence(state.freq, s.highlight[0]);
+    document.getElementById('resultDisplay').textContent = '第 ' + s.highlight[0] + ' 个元素';
+    document.getElementById('resultDetail').textContent = '第 ' + state.targetK + ' 小的元素位于索引 ' + s.highlight[0];
+    document.getElementById('stepHint').textContent = '✅ 第 ' + (state.step + 1) + ' / ' + state.history.length + ' 步 — 完成！';
+    document.getElementById('stepBtn').disabled = true;
+    state.done = true;
+  } else if (s.hlType === 'skip' || s.hlType === 'nxt') {
+    renderBIT(state.freq, state.bit, s.highlight, s.hlType);
+    document.getElementById('stepHint').textContent = '第 ' + (state.step + 1) + ' / ' + state.history.length + ' 步';
+  } else {
+    renderBIT(state.freq, state.bit, [], '');
+    document.getElementById('stepHint').textContent = '第 ' + (state.step + 1) + ' / ' + state.history.length + ' 步';
+  }
+}
+
+function resetDemo() {
+  clearAuto();
+  if (!state.freq) return;
+  state.step = -1;
+  state.done = false;
+
+  const k = state.targetK;
+  const freq = state.freq;
+  const bit = state.bit;
+
+  const result = generateSteps(freq, k);
+  state.history = result.steps;
+  state.finalIdx = result.finalIdx;
+
+  renderBIT(freq, bit);
+  renderSequence(freq);
+  document.getElementById('stepHint').textContent = '已重置，点击「单步执行」重新开始';
+  document.getElementById('resultDisplay').textContent = '—';
+  document.getElementById('resultDetail').textContent = '等待执行...';
+  document.getElementById('stepBtn').disabled = false;
+
+  renderVars({
+    idx: 0, k: k, bitmask: state.maxPow, nxt: null, bitNxt: null,
+    decision: '等待开始...', description: '点击「单步执行」逐步查看 BIT find_kth 的推算过程。',
+    hlType: ''
+  });
+  renderAlgSteps(state.history, -1);
+}
+
+function toggleAuto() {
+  if (state.autoTimer) {
+    clearAuto();
+    document.getElementById('autoBtn').textContent = '⏩ 自动播放';
+    document.getElementById('autoBtn').className = 'btn-outline';
+    return;
+  }
+  if (state.done) {
+    resetDemo();
+  }
+  document.getElementById('autoBtn').textContent = '⏸ 暂停';
+  document.getElementById('autoBtn').className = 'btn-warning';
+  state.autoTimer = setInterval(() => {
+    if (state.done) {
+      clearAuto();
+      document.getElementById('autoBtn').textContent = '⏩ 自动播放';
+      document.getElementById('autoBtn').className = 'btn-outline';
+      return;
+    }
+    stepOnce();
+  }, 1200);
+}
+
+function clearAuto() {
+  if (state.autoTimer) {
+    clearInterval(state.autoTimer);
+    state.autoTimer = null;
+  }
+}
+
+function setPreset(freqStr, kVal) {
+  document.getElementById('freqInput').value = freqStr;
+  document.getElementById('kInput').value = kVal;
+  initDemo();
+}
+
+// ============ Auto-init ============
+window.onload = initDemo;
+</script>
+</body>
+</html>

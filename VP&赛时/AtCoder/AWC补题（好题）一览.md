@@ -36,6 +36,14 @@
 
 ~~[AWC Beta0014E](https://atcoder.jp/contests/awc0014/tasks/awc0014_e)  区修区查~~ 
 
+[AWC Beta0015E](https://atcoder.jp/contests/awc0015/tasks/awc0015_e)  离线区间种类数（树状数组 | 莫队 | 可持久化线段树）
+
+[AWC Beta0016D](https://atcoder.jp/contests/awc0016/tasks/awc0016_d)  滑动窗口
+
+[AWC Beta0016E](https://atcoder.jp/contests/awc0016/tasks/awc0016_e)  状压DP（TSP问题）
+
+[AWC Beta0017E](https://atcoder.jp/contests/awc0017/tasks/awc0017_e)  状压DP（TSP问题）
+
 [AWC Beta0021E](https://atcoder.jp/contests/awc0021/tasks/awc0021_e)  DP（带距离限制的01背包）																																		[AWC Beta0025D](https://atcoder.jp/contests/awc0025/tasks/awc0025_d)  建图（函数图） + 找循环节（置换环）
 
 [AWC Beta0025E](https://atcoder.jp/contests/awc0025/tasks/awc0025_e)  树状数组 + 倍增 
@@ -115,3 +123,45 @@
 [AWC Beta0049E](https://atcoder.jp/contests/awc0049/tasks/awc0049_e?lang=en)  状压DP（困难）
 
 [AWC Beta0050E](https://atcoder.jp/contests/awc0050/tasks/awc0050_e?lang=en)  状压DP（简单）
+
+~~[AWC Beta0051C](https://atcoder.jp/contests/awc0051/tasks/awc0051_c)  二进制枚举 + 位操作~~ 
+
+~~[AWC Beta0052C](https://atcoder.jp/contests/awc0052/tasks/awc0052_c)  01背包~~ 
+
+[AWC Beta0052E](https://atcoder.jp/contests/awc0052/tasks/awc0052_e)  状压DP + Dijkstra
+
+[AWC Beta0053D](https://atcoder.jp/contests/awc0053/tasks/awc0053_d?lang=en)  区间推平（暴力线段树）或**区间并查集** 
+
+[AWC Beta0053E](https://atcoder.jp/contests/awc0053/tasks/awc0053_e?lang=en)  矩阵快速幂优化DP
+
+~~[AWC Beta0054B](https://atcoder.jp/contests/awc0054/tasks/awc0054_b)  排序贪心~~  
+
+[AWC Beta0054D](https://atcoder.jp/contests/awc0054/tasks/awc0054_d)  区间DP
+
+[AWC Beta0054E](https://atcoder.jp/contests/awc0054/tasks/awc0054_e)  树状数组
+
+[AWC Beta0055D](https://atcoder.jp/contests/awc0055/tasks/awc0055_d?lang=en)  动态第k小（树状数组）
+
+[AWC Beta0056D](https://atcoder.jp/contests/awc0056/tasks/awc0056_d?lang=en)  二维DP
+
+[AWC Beta0056E](https://atcoder.jp/contests/awc0056/tasks/awc0056_e?lang=en)  状压DP（TSP问题）
+
+~~[AWC Beta0057D](https://atcoder.jp/contests/awc0057/tasks/awc0057_d)  二进制枚举 + 位运算trick~~  
+
+~~[AWC Beta0059E](https://atcoder.jp/contests/awc0059/tasks/awc0059_e?lang=en)  LCA~~  
+
+[AWC Beta0060E](https://atcoder.jp/contests/awc0060/tasks/awc0060_e)  倍增
+
+[AWC Beta0061C](https://atcoder.jp/contests/awc0061/tasks/awc0061_c)  线性DP
+
+[AWC Beta0061D](https://atcoder.jp/contests/awc0061/tasks/awc0061_d)  图论建模 + 最短路（01BFS或Dijkstra）
+
+[AWC Beta0061E](https://atcoder.jp/contests/awc0061/tasks/awc0061_e)  二维DP
+
+[AWC Beta0062D](https://atcoder.jp/contests/awc0062/tasks/awc0062_d?lang=en)  字符串 汉明距离（思维）
+
+[AWC Beta0062E](https://atcoder.jp/contests/awc0062/tasks/awc0062_e?lang=en)  线段树
+
+[AWC Beta0063](https://atcoder.jp/contests/awc0063/tasks/awc0063_d?lang=en)  区间DP
+
+[AWC Beta0063E](https://atcoder.jp/contests/awc0063/tasks/awc0063_e?lang=en)  区间推平 + 区间块数查询（线段树）
