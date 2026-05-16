@@ -1,0 +1,47 @@
+import sys
+from math import inf
+
+Max = lambda x, y: x if x > y else y
+Min = lambda x, y: x if x < y else y
+
+input_type = 1
+
+if input_type:
+    inp = lambda: sys.stdin.readline().strip()
+
+    II = lambda: int(inp())
+    MII = lambda: map(int, inp().split())
+    LII = lambda: list(MII())
+
+else:
+    input_data = sys.stdin.read().split()
+    it = iter(input_data)
+    
+    II = lambda: int(next(it))
+    SI = lambda: next(it)
+    
+    if not input_data:
+        sys.exit()
+
+def main():
+    n, m = MII()
+    a = [-1] + LII()
+
+    Y = []
+    for _ in range(m):
+        l, r = MII()
+        Y.append((l, r))
+
+    Y.sort()
+
+    mi = inf
+    mx = -inf
+
+    for l, r in Y:
+        mi = Min(mi, sum(a[l:r + 1]))
+        mx = Max(mx, sum(a[l:r + 1]))
+
+    print(mx - mi)
+
+if __name__ == "__main__":
+    main()

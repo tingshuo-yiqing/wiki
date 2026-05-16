@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>二维偏序离线算法可视化</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 900px; }
+        h2 { color: #333; margin-top: 0; }
+        .controls { margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
+        
+        /* 图表区域 */
+        .viz-area { display: grid; grid-template-rows: 150px 100px 200px; gap: 20px; position: relative; }
+        
+        /* 原始数据展示 */
+        .shelf-list, .query-list { display: flex; gap: 8px; overflow-x: auto; padding: 10px; border: 1px dashed #ccc; }
+        .item { padding: 8px; border-radius: 4px; font-size: 12px; min-width: 60px; text-align: center; position: relative; transition: all 0.3s; }
+        .shelf { background: #e3f2fd; border: 1px solid #2196f3; }
+        .query { background: #fff3e0; border: 1px solid #ff9800; }
+        .active { transform: scale(1.1); box-shadow: 0 0 10px rgba(33, 150, 243, 0.5); border-width: 2px; }
+        .processed { opacity: 0.5; background: hsl(0, 87%, 45%) !important; border-color: #999 !important; }
+
+        /* 树状数组可视化 */
+        .bit-container { display: flex; flex-direction: column; align-items: center; }
+        .bit-array { display: flex; gap: 4px; }
+        .bit-node { width: 40px; height: 40px; border: 1px solid #4caf50; display: flex; align-items: center; justify-content: center; background: white; font-weight: bold; position: relative; transition: background 0.3s; }
+        .bit-node.update { background: #c8e6c9; }
+        .bit-label { font-size: 10px; color: #666; margin-top: 4px; }
+
+        /* 状态说明 */
+        .status-msg { padding: 15px; background: #333; color: #fff; border-radius: 6px; min-height: 24px; margin-bottom: 10px; width: 100%; box-sizing: border-box; }
+        .highlight-text { color: #ffeb3b; font-weight: bold; }
+
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; background: #2196f3; color: white; font-weight: bold; }
+        button:disabled { background: #ccc; }
+        .marker { position: absolute; top: -10px; font-size: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>二维偏序离线处理可视化 (排序 + 树状数组)</h2>
+    <div class="status-msg" id="status">点击“开始步进”观察离线处理流程...</div>
+    
+    <div class="controls">
+        <button id="nextBtn">开始步进 / 下一步</button>
+        <button id="resetBtn" style="background: #f44336;">重置</button>
+        <span id="time-info" style="margin-left: 20px; font-weight: bold; color: #666;">当前系统时间 D/T: 0</span>
+    </div>
+
+    <div class="viz-area">
+        <!-- 待处理的书架 (已按 D_i 排序) -->
+        <div>
+            <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">待处理书架 (按修复日期 D 排序)</div>
+            <div class="shelf-list" id="shelfList"></div>
+        </div>
+
+        <!-- 树状数组逻辑视图 -->
+        <div class="bit-container">
+            <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">树状数组 (维护位置 1-N 的收益区间和)</div>
+            <div class="bit-array" id="bitArray"></div>
+        </div>
+
+        <!-- 待处理的询问 (已按 T_j 排序) -->
+        <div>
+            <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">待处理询问 (按查询日期 T 排序)</div>
+            <div class="query-list" id="queryList"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 初始化数据
+    const shelves = [
+        {id: 1, pos: 2, d: 2, val: 10},
+        {id: 2, pos: 5, d: 3, val: 5},
+        {id: 3, pos: 1, d: 5, val: 20},
+        {id: 4, pos: 8, d: 6, val: 15},
+        {id: 5, pos: 3, d: 8, val: 30}
+    ].sort((a, b) => a.d - b.d);
+
+    const queries = [
+        {id: 1, l: 1, r: 4, t: 4, ans: 0},
+        {id: 2, l: 2, r: 8, t: 7, ans: 0},
+        {id: 3, l: 1, r: 8, t: 10, ans: 0}
+    ].sort((a, b) => a.t - b.t);
+
+    let currentShelfIdx = 0;
+    let currentQueryIdx = 0;
+    let bit = new Array(10).fill(0); // 简化版，直接存值模拟区间
+    let step = 0; // 0: 准备加入书架, 1: 处理询问
+
+    function render() {
+        const shelfList = document.getElementById('shelfList');
+        shelfList.innerHTML = shelves.map((s, i) => `
+            <div class="item shelf ${i < currentShelfIdx ? 'processed' : ''} ${i === currentShelfIdx && step === 0 ? 'active' : ''}">
+                Pos: ${s.pos}<br>D: <b>${s.d}</b><br>Val: ${s.val}
+            </div>
+        `).join('');
+
+        const queryList = document.getElementById('queryList');
+        queryList.innerHTML = queries.map((q, i) => `
+            <div class="item query ${i < currentQueryIdx ? 'processed' : ''} ${i === currentQueryIdx && step === 1 ? 'active' : ''}">
+                ID: ${q.id}<br>[${q.l}, ${q.r}]<br>T: <b>${q.t}</b>
+            </div>
+        `).join('');
+
+        const bitArray = document.getElementById('bitArray');
+        bitArray.innerHTML = bit.slice(1).map((v, i) => `
+            <div class="bit-container">
+                <div class="bit-node" id="node-${i+1}">${v}</div>
+                <div class="bit-label">位置 ${i+1}</div>
+            </div>
+        `).join('');
+    }
+
+    function updateStatus(msg) {
+        document.getElementById('status').innerHTML = msg;
+    }
+
+    document.getElementById('nextBtn').onclick = () => {
+        if (currentQueryIdx >= queries.length) {
+            updateStatus("所有查询处理完毕！");
+            return;
+        }
+
+        const q = queries[currentQueryIdx];
+        document.getElementById('time-info').innerText = `当前系统时间 T: ${q.t}`;
+
+        // 检查是否有书架可以加入
+        if (currentShelfIdx < shelves.length && shelves[currentShelfIdx].d <= q.t) {
+            step = 0;
+            const s = shelves[currentShelfIdx];
+            updateStatus(`正在处理书架: 修复时间 <span class="highlight-text">D=${s.d}</span> ≤ 询问时间 <span class="highlight-text">T=${q.t}</span>。将位置 <span class="highlight-text">${s.pos}</span> 的收益 <span class="highlight-text">${s.val}</span> 加入树状数组。`);
+            
+            // 模拟树状数组更新
+            bit[s.pos] += s.val;
+            const node = document.getElementById(`node-${s.pos}`);
+            node.classList.add('update');
+            setTimeout(() => node.classList.remove('update'), 500);
+
+            currentShelfIdx++;
+            render();
+        } else {
+            // 所有符合条件的书架已加入，处理当前询问
+            step = 1;
+            render();
+            let sum = 0;
+            for(let i = q.l; i <= q.r; i++) sum += bit[i];
+            
+            updateStatus(`处理询问 ID ${q.id}: 此时所有 D ≤ ${q.t} 的书架已激活。查询区间 <span class="highlight-text">[${q.l}, ${q.r}]</span> 的和，结果为 <span class="highlight-text">${sum}</span>。`);
+            
+            // 高亮查询区间
+            for(let i = q.l; i <= q.r; i++) {
+                document.getElementById(`node-${i}`).style.borderColor = "#ff9800";
+                document.getElementById(`node-${i}`).style.borderWidth = "3px";
+            }
+            
+            setTimeout(() => {
+                currentQueryIdx++;
+                step = 0;
+                render();
+            }, 1500);
+        }
+    };
+
+    document.getElementById('resetBtn').onclick = () => location.reload();
+
+    render();
+</script>
+
+</body>
+</html>

@@ -44,6 +44,10 @@
 
 [AWC Beta0017E](https://atcoder.jp/contests/awc0017/tasks/awc0017_e)  状压DP（TSP问题）
 
+~~[AWC Beta0018C](https://atcoder.jp/contests/awc0018/tasks/awc0018_c)  通过建立映射进行快速字符替换~~ 
+
+[AWC Beta0018E](https://atcoder.jp/contests/awc0018/tasks/awc0018_e?lang=en)  带限制的LIS问题（二维DP）
+
 [AWC Beta0021E](https://atcoder.jp/contests/awc0021/tasks/awc0021_e)  DP（带距离限制的01背包）																																		[AWC Beta0025D](https://atcoder.jp/contests/awc0025/tasks/awc0025_d)  建图（函数图） + 找循环节（置换环）
 
 [AWC Beta0025E](https://atcoder.jp/contests/awc0025/tasks/awc0025_e)  树状数组 + 倍增 
@@ -154,7 +158,7 @@
 
 [AWC Beta0061C](https://atcoder.jp/contests/awc0061/tasks/awc0061_c)  线性DP
 
-[AWC Beta0061D](https://atcoder.jp/contests/awc0061/tasks/awc0061_d)  图论建模 + 最短路（01BFS或Dijkstra）
+~~[AWC Beta0061D](https://atcoder.jp/contests/awc0061/tasks/awc0061_d)  图论建模 + 最短路（01BFS或Dijkstra）~~ 
 
 [AWC Beta0061E](https://atcoder.jp/contests/awc0061/tasks/awc0061_e)  二维DP
 
@@ -162,6 +166,30 @@
 
 [AWC Beta0062E](https://atcoder.jp/contests/awc0062/tasks/awc0062_e?lang=en)  线段树
 
-[AWC Beta0063](https://atcoder.jp/contests/awc0063/tasks/awc0063_d?lang=en)  区间DP
+[AWC Beta0063D](https://atcoder.jp/contests/awc0063/tasks/awc0063_d?lang=en)  区间DP
 
 [AWC Beta0063E](https://atcoder.jp/contests/awc0063/tasks/awc0063_e?lang=en)  区间推平 + 区间块数查询（线段树）
+
+[AWC Beta0065D](https://atcoder.jp/contests/awc0065/tasks/awc0065_d)  曼哈顿距离转切比雪夫距离（二维前缀和）
+
+[AWC Beta0066D](https://atcoder.jp/contests/awc0066/tasks/awc0066_d)  二分答案（最小化最大值）
+
+[AWC Beta0066E](https://atcoder.jp/contests/awc0066/tasks/awc0066_e)  状压DP
+
+[AWC Beta0067C](https://atcoder.jp/contests/awc0067/tasks/awc0067_c)  完全背包变种
+
+~~[AWC Beta0067D](https://atcoder.jp/contests/awc0067/tasks/awc0067_d)  Floyd算法 + 暴力枚举~~ 
+
+[AWC Beta0067E](https://atcoder.jp/contests/awc0067/tasks/awc0067_e)  尼姆博弈变种 + 巴什博奕 + SG函数
+
+~~[AWC Beta0068C](https://atcoder.jp/contests/awc0068/tasks/awc0068_c)  并查集~~ 
+
+~~[AWC Beta0068D](https://atcoder.jp/contests/awc0068/tasks/awc0068_c)  Dijkstra算法~~ 
+
+[AWC Beta0068E](https://atcoder.jp/contests/awc0068/tasks/awc0068_e)  二维前缀和 + 二维滑动窗口最值（单调队列）
+
+[AWC Beta0069D](https://atcoder.jp/contests/awc0069/tasks/awc0069_d)  贪心（一维区间的覆盖问题）
+
+~~[AWC Beta0069E](https://atcoder.jp/contests/awc0069/tasks/awc0069_e)  离线处理 + 二维偏序~~ 
+
+[AWC Beta0070E](https://atcoder.jp/contests/awc0070/tasks/awc0070_e)  Dijkstra + TSP问题
